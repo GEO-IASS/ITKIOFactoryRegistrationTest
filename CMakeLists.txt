@@ -109,18 +109,21 @@ endif()
 
 macro(ITKIOFactoryRegistrationByAppPlugin_add_test)
   set(extra_args $<TARGET_FILE:AppHelloPluginLoading${factory_type}>)
-  set(qualifier "Static")
-  if(factory_type STREQUAL "WithoutIO")
+  set(qualifier "WithPlugin")
+  if(NOT with_app_plugin)
+     set(qualifier "WithoutPlugin")
     set(extra_args "None")
-    set(qualifier )
   endif()
-  set(testname ${PROJECT_NAME}_${qualifier}${factory_type})
+  if(NOT factory_type STREQUAL "WithoutIO")
+    set(qualifier ${qualifier}_WithStatic${factory_type})
+  endif()
   set(testenv )
   if(with_dynamic_io_factory)
-    set(testname "${testname}WithDynamicIOFactory")
+    set(qualifier "${qualifier}_WithDynamic${factory_type}")
     list(APPEND extra_args "--with-dynamic-io-factory")
     set(testenv ENVIRONMENT "ITK_AUTOLOAD_PATH=${ITK${factory_type}DisplayHello_LIBRARY_OUTPUT_DIRECTORY}")
   endif()
+  set(testname ${PROJECT_NAME}_${qualifier})
   add_test(
     NAME ${testname}
     COMMAND $<TARGET_FILE:App${factory_type}>
@@ -132,7 +135,7 @@ macro(ITKIOFactoryRegistrationByAppPlugin_add_test)
     set(pass_regex "${pass_regex}DisplayHello${factory_type}_[01]\n")
     set(pass_regex "${pass_regex}DisplayHello${factory_type}_[01]\n")
   endif()
-  if(NOT factory_type STREQUAL "WithoutIO")
+  if(with_app_plugin)
     set(pass_regex "${pass_regex}Hello from plugin loading ${factory_type}\n")
   endif()
   set_tests_properties(${testname}
@@ -142,11 +145,29 @@ macro(ITKIOFactoryRegistrationByAppPlugin_add_test)
   )
 endmacro()
 
+# --------------------------------------------------------------------------
+set(with_app_plugin FALSE)
+
 # Check App without IOFactory has zero factory registered
 set(expectedRegisteredFactoryCount 0)
 set(factory_type "WithoutIO")
 set(with_dynamic_io_factory FALSE)
 ITKIOFactoryRegistrationByAppPlugin_add_test()
+
+# Check ImageIO statically initialized are loaded only once
+set(expectedRegisteredFactoryCount 2)
+set(factory_type "ImageIO")
+set(with_dynamic_io_factory FALSE)
+ITKIOFactoryRegistrationByAppPlugin_add_test()
+
+# Check TransformIO statically initialized are loaded only once
+set(expectedRegisteredFactoryCount 2)
+set(factory_type "TransformIO")
+set(with_dynamic_io_factory FALSE)
+ITKIOFactoryRegistrationByAppPlugin_add_test()
+
+# --------------------------------------------------------------------------
+set(with_app_plugin TRUE)
 
 # Check ImageIO statically initialized are loaded only once
 set(expectedRegisteredFactoryCount 2)
@@ -170,5 +191,5 @@ ITKIOFactoryRegistrationByAppPlugin_add_test()
 set(expectedRegisteredFactoryCount 4)
 set(factory_type "TransformIO")
 set(with_dynamic_io_factory TRUE)
-# XXX TransformIO plugin are not support
+# XXX TransformIO plugin are not supported
 #ITKIOFactoryRegistrationByAppPlugin_add_test()
