@@ -40,6 +40,12 @@ add_subdirectory(ITKImageIODisplayHello ITKImageIODisplayHello${NAME_SUFFIX})
 set(NAME_SUFFIX "1")
 add_subdirectory(ITKImageIODisplayHello ITKImageIODisplayHello${NAME_SUFFIX})
 
+set(factory_type "ImageIO")
+
+set(DYNAMIC_${factory_type}_COUNT 2)
+
+message(STATUS "Number of custom dynamic '${factory_type}' factories: ${DYNAMIC_${factory_type}_COUNT}")
+
 # --------------------------------------------------------------------------
 # Build a custom ITK TransformIO plugins
 
@@ -50,6 +56,12 @@ add_subdirectory(ITKTransformIODisplayHello ITKTransformIODisplayHello${NAME_SUF
 
 set(NAME_SUFFIX "1")
 add_subdirectory(ITKTransformIODisplayHello ITKTransformIODisplayHello${NAME_SUFFIX})
+
+set(factory_type "TransformIO")
+
+set(DYNAMIC_${factory_type}_COUNT 2)
+
+message(STATUS "Number of custom dynamic '${factory_type}' factories: ${DYNAMIC_${factory_type}_COUNT}")
 
 # --------------------------------------------------------------------------
 # Build App without IO factories
@@ -165,68 +177,79 @@ macro(ITKIOFactoryRegistrationByAppPlugin_add_test)
   )
 endmacro()
 
+
+# --------------------------------------------------------------------------
+# This variables will be used to compute the number of expected registered
+# factories.
+list(LENGTH ITK_ImageIO_MODULES_USED STATIC_ImageIO_COUNT)
+list(LENGTH ITK_TransformIO_MODULES_USED STATIC_TransformIO_COUNT)
+
+foreach(factory_type "ImageIO" "TransformIO")
+  message(STATUS "Number of expected statically initialized '${factory_type}' factories: ${STATIC_${factory_type}_COUNT}")
+endforeach()
+
 # --------------------------------------------------------------------------
 set(with_app_plugin FALSE)
 set(plugin_factory_type "WithoutIO")
 set(plugin_dynamic_factory_type "WithoutIO")
 
 # Check App without IOFactory has zero factory registered
-set(expectedRegisteredFactoryCount 0)
 set(app_factory_type "WithoutIO")
+set(expectedRegisteredFactoryCount 0)
 ITKIOFactoryRegistrationByAppPlugin_add_test()
 
 # Check ImageIO statically initialized are loaded only once
-set(expectedRegisteredFactoryCount 2)
 set(app_factory_type "ImageIO")
+set(expectedRegisteredFactoryCount ${STATIC_${app_factory_type}_COUNT})
 ITKIOFactoryRegistrationByAppPlugin_add_test()
 
 # Check TransformIO statically initialized are loaded only once
-set(expectedRegisteredFactoryCount 2)
 set(app_factory_type "TransformIO")
+set(expectedRegisteredFactoryCount ${STATIC_${app_factory_type}_COUNT})
 ITKIOFactoryRegistrationByAppPlugin_add_test()
 
 # --------------------------------------------------------------------------
 set(with_app_plugin TRUE)
 
 # Check App without ImageIO and plugin has registered factories
-set(expectedRegisteredFactoryCount 2)
 set(app_factory_type "WithoutIO")
 set(plugin_factory_type "ImageIO")
+set(expectedRegisteredFactoryCount ${STATIC_${plugin_factory_type}_COUNT})
 set(plugin_dynamic_factory_type "WithoutIO")
 ITKIOFactoryRegistrationByAppPlugin_add_test()
 
 # Check App without TransformIO and plugin has registered factories
-set(expectedRegisteredFactoryCount 2)
 set(app_factory_type "WithoutIO")
 set(plugin_factory_type "TransformIO")
+set(expectedRegisteredFactoryCount ${STATIC_${plugin_factory_type}_COUNT})
 set(plugin_dynamic_factory_type "WithoutIO")
 ITKIOFactoryRegistrationByAppPlugin_add_test()
 
 # Check ImageIO statically initialized are loaded only once
-set(expectedRegisteredFactoryCount 2)
 set(app_factory_type "ImageIO")
 set(plugin_factory_type "ImageIO")
+set(expectedRegisteredFactoryCount ${STATIC_${plugin_factory_type}_COUNT})
 set(plugin_dynamic_factory_type "WithoutIO")
 ITKIOFactoryRegistrationByAppPlugin_add_test()
 
 # Check TransformIO statically initialized are loaded only once
-set(expectedRegisteredFactoryCount 2)
 set(app_factory_type "TransformIO")
 set(plugin_factory_type "TransformIO")
+set(expectedRegisteredFactoryCount ${STATIC_${plugin_factory_type}_COUNT})
 set(plugin_dynamic_factory_type "WithoutIO")
 ITKIOFactoryRegistrationByAppPlugin_add_test()
 
 # Check shared ImageIO along with statically initialized ones are loaded only once
-set(expectedRegisteredFactoryCount 4)
 set(app_factory_type "ImageIO")
 set(plugin_factory_type "ImageIO")
 set(plugin_dynamic_factory_type "ImageIO")
+math(EXPR expectedRegisteredFactoryCount "${STATIC_${plugin_factory_type}_COUNT} + ${DYNAMIC_${plugin_dynamic_factory_type}_COUNT}")
 ITKIOFactoryRegistrationByAppPlugin_add_test()
 
 # Check shared TransformIO along with statically initialized ones are loaded only once
-set(expectedRegisteredFactoryCount 4)
 set(app_factory_type "TransformIO")
 set(plugin_factory_type "TransformIO")
 set(plugin_dynamic_factory_type "TransformIO")
+math(EXPR expectedRegisteredFactoryCount "${STATIC_${plugin_factory_type}_COUNT} + ${DYNAMIC_${plugin_dynamic_factory_type}_COUNT}")
 # XXX TransformIO plugin are not supported
 #ITKIOFactoryRegistrationByAppPlugin_add_test()
