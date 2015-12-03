@@ -32,13 +32,24 @@ set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/bin)
 # --------------------------------------------------------------------------
 # Build a custom ITK ImageIO plugin
 
-set(ITKIODisplayHello_LIBRARY_OUTPUT_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/io)
+set(ITKImageIODisplayHello_LIBRARY_OUTPUT_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/imageio)
 
 set(NAME_SUFFIX "0")
-add_subdirectory(ITKIODisplayHello ITKIODisplayHello${NAME_SUFFIX})
+add_subdirectory(ITKImageIODisplayHello ITKImageIODisplayHello${NAME_SUFFIX})
 
 set(NAME_SUFFIX "1")
-add_subdirectory(ITKIODisplayHello ITKIODisplayHello${NAME_SUFFIX})
+add_subdirectory(ITKImageIODisplayHello ITKImageIODisplayHello${NAME_SUFFIX})
+
+# --------------------------------------------------------------------------
+# Build a custom ITK TransformIO plugins
+
+set(ITKTransformIODisplayHello_LIBRARY_OUTPUT_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/transformio)
+
+set(NAME_SUFFIX "0")
+add_subdirectory(ITKTransformIODisplayHello ITKTransformIODisplayHello${NAME_SUFFIX})
+
+set(NAME_SUFFIX "1")
+add_subdirectory(ITKTransformIODisplayHello ITKTransformIODisplayHello${NAME_SUFFIX})
 
 # --------------------------------------------------------------------------
 # Build App without IO factories
@@ -92,7 +103,8 @@ add_subdirectory(App App${FACTORY_TYPE})
 include(CTest)
 
 if(CMAKE_CONFIGURATION_TYPES)
-  set(ITKIODisplayHello_LIBRARY_OUTPUT_DIRECTORY "${ITKIODisplayHello_LIBRARY_OUTPUT_DIRECTORY}/$<CONFIG>")
+  set(ITKImageIODisplayHello_LIBRARY_OUTPUT_DIRECTORY "${ITKImageIODisplayHello_LIBRARY_OUTPUT_DIRECTORY}/$<CONFIG>")
+  set(ITKTransformIODisplayHello_LIBRARY_OUTPUT_DIRECTORY "${ITKTransformIODisplayHello_LIBRARY_OUTPUT_DIRECTORY}/$<CONFIG>")
 endif()
 
 macro(ITKIOFactoryRegistrationByAppPlugin_add_test)
@@ -107,7 +119,7 @@ macro(ITKIOFactoryRegistrationByAppPlugin_add_test)
   if(with_dynamic_io_factory)
     set(testname "${testname}WithDynamicIOFactory")
     list(APPEND extra_args "--with-dynamic-io-factory")
-    set(testenv ENVIRONMENT "ITK_AUTOLOAD_PATH=${ITKIODisplayHello_LIBRARY_OUTPUT_DIRECTORY}")
+    set(testenv ENVIRONMENT "ITK_AUTOLOAD_PATH=${ITK${factory_type}DisplayHello_LIBRARY_OUTPUT_DIRECTORY}")
   endif()
   add_test(
     NAME ${testname}
@@ -153,3 +165,10 @@ set(expectedRegisteredFactoryCount 4)
 set(factory_type "ImageIO")
 set(with_dynamic_io_factory TRUE)
 ITKIOFactoryRegistrationByAppPlugin_add_test()
+
+# Check shared TransformIO along with statically initialized ones are loaded only once
+set(expectedRegisteredFactoryCount 4)
+set(factory_type "TransformIO")
+set(with_dynamic_io_factory TRUE)
+# XXX TransformIO plugin are not support
+#ITKIOFactoryRegistrationByAppPlugin_add_test()
