@@ -99,13 +99,22 @@ int main(int argc, char* argv[])
       }
     }
 
+  int expectedRegisteredFactoryCountBeforePluginLoad = expectedRegisteredFactoryCount;
+
+#if !defined(BUILD_ImageIO_PLUGIN) && !defined(BUILD_TransformIO_PLUGIN)
+   expectedRegisteredFactoryCountBeforePluginLoad = 0;
+#endif
+
+  std::cout << "expectedRegisteredFactoryCountBeforePluginLoad: "
+            << expectedRegisteredFactoryCountBeforePluginLoad << std::endl;
+
   std::cout << "expectedRegisteredFactoryCount: "
-            << expectedRegisteredFactoryCount << std::endl; 
+            << expectedRegisteredFactoryCount << std::endl;
 
   /**
    * Check that ITK factories are registered
    */
-  if ( !checkRegisteredFactories(__LINE__, expectedRegisteredFactoryCount) )
+  if ( !checkRegisteredFactories(__LINE__, expectedRegisteredFactoryCountBeforePluginLoad) )
     {
     return EXIT_FAILURE;
     }
