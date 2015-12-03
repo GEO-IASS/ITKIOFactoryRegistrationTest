@@ -34,7 +34,11 @@ set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/bin)
 
 set(ITKIODisplayHello_LIBRARY_OUTPUT_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/io)
 
-add_subdirectory(ITKIODisplayHello)
+set(NAME_SUFFIX "0")
+add_subdirectory(ITKIODisplayHello ITKIODisplayHello${NAME_SUFFIX})
+
+set(NAME_SUFFIX "1")
+add_subdirectory(ITKIODisplayHello ITKIODisplayHello${NAME_SUFFIX})
 
 # --------------------------------------------------------------------------
 # Build App without IO factories
@@ -113,7 +117,8 @@ macro(ITKIOFactoryRegistrationByAppPlugin_add_test)
     )
   set(pass_regex "expectedRegisteredFactoryCount: ${expectedRegisteredFactoryCount}\n")
   if(with_dynamic_io_factory)
-    set(pass_regex "${pass_regex}DisplayHello${factory_type}Factory\n")
+    set(pass_regex "${pass_regex}DisplayHello${factory_type}_[01]\n")
+    set(pass_regex "${pass_regex}DisplayHello${factory_type}_[01]\n")
   endif()
   if(NOT factory_type STREQUAL "WithoutIO")
     set(pass_regex "${pass_regex}Hello from plugin loading ${factory_type}\n")
@@ -144,7 +149,7 @@ set(with_dynamic_io_factory FALSE)
 ITKIOFactoryRegistrationByAppPlugin_add_test()
 
 # Check shared ImageIO along with statically initialized ones are loaded only once
-set(expectedRegisteredFactoryCount 3)
+set(expectedRegisteredFactoryCount 4)
 set(factory_type "ImageIO")
 set(with_dynamic_io_factory TRUE)
 ITKIOFactoryRegistrationByAppPlugin_add_test()

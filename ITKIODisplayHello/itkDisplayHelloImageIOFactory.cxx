@@ -37,7 +37,7 @@ itk::ObjectFactoryBase* itkLoad()
 {
   static itk::DisplayHelloImageIOFactory::Pointer f
     = itk::DisplayHelloImageIOFactory::New();
-  std::cout << "DisplayHelloImageIOFactory" << std::endl;
+  std::cout << DISPLAYHELLO_IMAGE_FACTORY_NAME << std::endl;
   return f;
 }
 
@@ -48,7 +48,7 @@ DisplayHelloImageIOFactory::DisplayHelloImageIOFactory()
 {
   this->RegisterOverride("itkImageIOBase",
                          "itkDisplayHelloImageIO",
-                         "ImageIO that display its name when registered",
+                         "DisplayHello ImageIO",
                          1,
                          CreateObjectFunction<DisplayHelloImageIO>::New());
 }
@@ -66,7 +66,7 @@ DisplayHelloImageIOFactory::GetITKSourceVersion(void) const
 const char*
 DisplayHelloImageIOFactory::GetDescription() const
 {
-  return "ImageIO that display its name when registered";
+  return "DisplayHello ImageIO Factory, displays its name when registered";
 }
 
 } // end namespace itk

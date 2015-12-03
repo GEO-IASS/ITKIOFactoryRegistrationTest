@@ -1,5 +1,9 @@
 
-project(DisplayHelloImageIO)
+if(NOT DEFINED NAME_SUFFIX)
+  message(FATAL_ERROR "NAME_SUFFIX is expected to be set")
+endif()
+
+project(DisplayHelloImageIO_${NAME_SUFFIX})
 
 message(STATUS "Configuring ${CMAKE_PROJECT_NAME}:${PROJECT_NAME}")
 
@@ -20,13 +24,14 @@ find_package(
   )
 include(${ITK_USE_FILE})
 
-set(io_factory_name ${PROJECT_NAME}Lib)
+set(io_factory_name ${PROJECT_NAME})
 add_library(${io_factory_name} MODULE
-  itk${PROJECT_NAME}.cxx
-  itk${PROJECT_NAME}Factory.cxx
+  itkDisplayHelloImageIO.cxx
+  itkDisplayHelloImageIOFactory.cxx
   )
 target_link_libraries(${io_factory_name} LINK_PUBLIC ${ITK_LIBRARIES})
-set_property(
-  TARGET ${io_factory_name}
-  PROPERTY LIBRARY_OUTPUT_DIRECTORY ${ITKIODisplayHello_LIBRARY_OUTPUT_DIRECTORY}
+set_target_properties(${io_factory_name}
+  PROPERTIES
+    LIBRARY_OUTPUT_DIRECTORY ${ITKIODisplayHello_LIBRARY_OUTPUT_DIRECTORY}
+    COMPILE_DEFINITIONS "DISPLAYHELLO_IMAGE_FACTORY_NAME=\"${PROJECT_NAME}\""
   )
