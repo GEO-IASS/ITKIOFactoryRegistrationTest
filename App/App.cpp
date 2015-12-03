@@ -17,13 +17,19 @@
  *=========================================================================*/
 
 // ITK includes
-#include "itkCreateObjectFunction.h"
+#include <itkCreateObjectFunction.h>
 #include <itkDynamicLoader.h>
-#include <itkImageFileReader.h>
-#include <itkTransformFileReader.h>
+
+#ifdef BUILD_ImageIO_PLUGIN
+# include <itkImageFileReader.h>
+#endif
+#ifdef BUILD_TransformIO_PLUGIN
+# include <itkTransformFileReader.h>
+#endif
 
 // STD includes
 #include <cstdlib>
+#include <cstring>
 
 namespace
 {
@@ -64,19 +70,28 @@ typedef void ( *APP_HELLO_PLUGIN_SAY_HELLO_FUNCTION )();
 
 int main(int argc, char* argv[])
 {
-  int expectedRegisteredFactoryCount = 4;
-
-  if (argc <= 1)
+  if (argc < 3)
     {
     std::cerr << "Failed to run " << argv[0]
-              << "\nUsage: " << argv[0] << " /path/to/AppHelloPlugin"
+              << "\nUsage: App"
+              << " <expectedRegisteredFactoryCount>"
+              << " /path/to/AppHelloPlugin|None"
+              << " [--with-dynamic-io-factory]"
               << std::endl;
     return EXIT_FAILURE;
     }
 
-  std::string appplugin_fullpath = argv[1];
+  int expectedRegisteredFactoryCount = atoi(argv[1]);
+  std::string appplugin_fullpath = argv[2];
 
-  if (argc >= 3)
+  bool load_plugin = true;
+
+  if ( appplugin_fullpath == "None" )
+    {
+    load_plugin = false;
+    }
+
+  if (argc > 3)
     {
     if ( strcmp(argv[2], "--with-dynamic-io-factory") == 0 )
       {
@@ -93,6 +108,11 @@ int main(int argc, char* argv[])
   if ( !checkRegisteredFactories(__LINE__, expectedRegisteredFactoryCount) )
     {
     return EXIT_FAILURE;
+    }
+
+  if ( !load_plugin )
+    {
+    return EXIT_SUCCESS;
     }
 
   /**

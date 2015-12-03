@@ -19,14 +19,14 @@
 #ifndef AppHelloPlugin_h
 #define AppHelloPlugin_h
 
-#include "apphellopluginlib_export.h"
+#include "apphelloplugin_export.h"
 
 // STD includes
 #include <iostream>
 
 extern "C"
 {
-void APPHELLOPLUGINLIB_EXPORT AppHelloPlugin_DisplayHello();
+void APPHELLOPLUGIN_EXPORT AppHelloPlugin_DisplayHello();
 }
 
 #endif

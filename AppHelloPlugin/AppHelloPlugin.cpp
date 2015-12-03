@@ -19,13 +19,19 @@
 #include "AppHelloPlugin.h"
 
 // ITK includes
-#include <itkImageFileReader.h>
-#include <itkTransformFileReader.h>
+#ifdef BUILD_ImageIO_PLUGIN
+const char* what = "ImageIO";
+# include <itkImageFileReader.h>
+#endif
+#ifdef BUILD_TransformIO_PLUGIN
+const char* what = "TransformIO";
+# include <itkTransformFileReader.h>
+#endif
 
 // STD includes
 #include <iostream>
 
 void AppHelloPlugin_DisplayHello()
 {
-  std::cout << "Hello" << std::endl;
+  std::cout << "Hello from plugin loading " << what << std::endl;
 }
