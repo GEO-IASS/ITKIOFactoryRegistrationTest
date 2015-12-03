@@ -57,6 +57,11 @@ add_test(
   NAME ${testname}
   COMMAND $<TARGET_FILE:App> $<TARGET_FILE:AppHelloPluginLib> --with-dynamic-io-factory
   )
+
+if(CMAKE_CONFIGURATION_TYPES)
+  set(ITKIODisplayHello_LIBRARY_OUTPUT_DIRECTORY "${ITKIODisplayHello_LIBRARY_OUTPUT_DIRECTORY}/$<CONFIG>")
+endif()
+
 set_tests_properties(${testname}
   PROPERTIES
   PASS_REGULAR_EXPRESSION "^expectedRegisteredFactoryCount: 5\nDisplayHelloImageIOFactory\nHello\n$"
