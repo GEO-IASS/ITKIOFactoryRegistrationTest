@@ -4,6 +4,7 @@ endif()
 
 project(App${FACTORY_TYPE})
 
+message(STATUS "")
 message(STATUS "Configuring ${CMAKE_PROJECT_NAME}:${PROJECT_NAME}")
 
 # --------------------------------------------------------------------------

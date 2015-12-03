@@ -11,6 +11,7 @@ project(${PLUGIN_NAME})
 
 include(GenerateExportHeader)
 
+message(STATUS "")
 message(STATUS "Configuring ${CMAKE_PROJECT_NAME}:${PLUGIN_NAME}")
 
 # --------------------------------------------------------------------------

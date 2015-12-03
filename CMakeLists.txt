@@ -32,6 +32,8 @@ set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/bin)
 # --------------------------------------------------------------------------
 # Build a custom ITK ImageIO plugin
 
+message(STATUS "")
+
 set(ITKImageIODisplayHello_LIBRARY_OUTPUT_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/imageio)
 
 set(NAME_SUFFIX "0")
@@ -48,6 +50,8 @@ message(STATUS "Number of custom dynamic '${factory_type}' factories: ${DYNAMIC_
 
 # --------------------------------------------------------------------------
 # Build a custom ITK TransformIO plugins
+
+message(STATUS "")
 
 set(ITKTransformIODisplayHello_LIBRARY_OUTPUT_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/transformio)
 
@@ -184,6 +188,7 @@ endmacro()
 list(LENGTH ITK_ImageIO_MODULES_USED STATIC_ImageIO_COUNT)
 list(LENGTH ITK_TransformIO_MODULES_USED STATIC_TransformIO_COUNT)
 
+message(STATUS "")
 foreach(factory_type "ImageIO" "TransformIO")
   message(STATUS "Number of expected statically initialized '${factory_type}' factories: ${STATIC_${factory_type}_COUNT}")
 endforeach()
