@@ -17,10 +17,9 @@ message(STATUS "Configuring ${CMAKE_PROJECT_NAME}:${PLUGIN_NAME}")
 # An application plugin loading ${FACTORY_TYPE} factories
 # --------------------------------------------------------------------------
 
-set(${PROJECT_NAME}_ITK_COMPONENTS ${ITK_${FACTORY_TYPE}_MODULES_USED})
 find_package(
   ITK ${ITK_MINIMUM_REQUIRED_VERSION}
-  COMPONENTS ${${PROJECT_NAME}_ITK_COMPONENTS} REQUIRED
+  COMPONENTS ${ITK_${FACTORY_TYPE}_COMPONENTS} REQUIRED
   )
 include(${ITK_USE_FILE})
 

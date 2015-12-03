@@ -54,9 +54,11 @@ add_subdirectory(ITKTransformIODisplayHello ITKTransformIODisplayHello${NAME_SUF
 # --------------------------------------------------------------------------
 # Build App without IO factories
 set(FACTORY_TYPE "WithoutIO")
-
 set(ITK_${FACTORY_TYPE}_MODULES_USED
+  )
+set(ITK_${FACTORY_TYPE}_COMPONENTS
   ITKCommon
+  ${ITK_${FACTORY_TYPE}_MODULES_USED}
   )
 
 # Build App without static initialization
@@ -67,9 +69,12 @@ add_subdirectory(App App${FACTORY_TYPE})
 
 set(FACTORY_TYPE ImageIO)
 set(ITK_${FACTORY_TYPE}_MODULES_USED
-  ITKIOImageBase
   ITKIOTIFF
   ITKIOMeta
+  )
+set(ITK_${FACTORY_TYPE}_COMPONENTS
+  ITKIOImageBase
+  ${ITK_${FACTORY_TYPE}_MODULES_USED}
   )
 
 # Build App plugin
@@ -84,9 +89,12 @@ add_subdirectory(App App${FACTORY_TYPE})
 
 set(FACTORY_TYPE TransformIO)
 set(ITK_${FACTORY_TYPE}_MODULES_USED
-  ITKIOTransformBase
   ITKIOTransformHDF5
   ITKIOTransformInsightLegacy
+  )
+set(ITK_${FACTORY_TYPE}_COMPONENTS
+  ITKIOTransformBase
+  ${ITK_${FACTORY_TYPE}_MODULES_USED}
   )
 
 # Build App plugin
