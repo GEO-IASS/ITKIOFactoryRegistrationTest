@@ -30,6 +30,16 @@ set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/bin)
 set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/bin)
 
 # --------------------------------------------------------------------------
+add_subdirectory(HackForIOList)
+
+message(STATUS "")
+get_property(LIST_OF_ENABLED_ImageIO_MODULES GLOBAL PROPERTY LIST_OF_ENABLED_ImageIO_MODULES)
+message(STATUS "LIST_OF_ENABLED_ImageIO_MODULES: ${LIST_OF_ENABLED_ImageIO_MODULES}")
+
+get_property(LIST_OF_ENABLED_TransformIO_MODULES GLOBAL PROPERTY LIST_OF_ENABLED_TransformIO_MODULES)
+message(STATUS "LIST_OF_ENABLED_TransformIO_MODULES: ${LIST_OF_ENABLED_TransformIO_MODULES}")
+
+# --------------------------------------------------------------------------
 # Build a custom ITK ImageIO plugin
 
 message(STATUS "")
@@ -85,8 +95,7 @@ add_subdirectory(App App${FACTORY_TYPE})
 
 set(FACTORY_TYPE ImageIO)
 set(ITK_${FACTORY_TYPE}_MODULES_USED
-  ITKIOTIFF
-  ITKIOMeta
+  ${LIST_OF_ENABLED_${FACTORY_TYPE}_MODULES}
   )
 set(ITK_${FACTORY_TYPE}_COMPONENTS
   ITKIOImageBase
@@ -105,8 +114,7 @@ add_subdirectory(App App${FACTORY_TYPE})
 
 set(FACTORY_TYPE TransformIO)
 set(ITK_${FACTORY_TYPE}_MODULES_USED
-  ITKIOTransformHDF5
-  ITKIOTransformInsightLegacy
+  ${LIST_OF_ENABLED_${FACTORY_TYPE}_MODULES}
   )
 set(ITK_${FACTORY_TYPE}_COMPONENTS
   ITKIOTransformBase
