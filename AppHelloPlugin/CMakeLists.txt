@@ -30,9 +30,6 @@ find_package(
   )
 include(${ITK_USE_FILE})
 
-# By default factories are registered.
-# set(ITK_NO_IO_FACTORY_REGISTER_MANAGER 0)
-
 # --------------------------------------------------------------------------
 # An application plugin
 # --------------------------------------------------------------------------
