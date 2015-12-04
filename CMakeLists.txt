@@ -44,15 +44,16 @@ message(STATUS "LIST_OF_ENABLED_TransformIO_MODULES: ${LIST_OF_ENABLED_Transform
 
 message(STATUS "")
 
-set(ITKImageIODisplayHello_LIBRARY_OUTPUT_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/imageio)
+set(factory_type "ImageIO")
+set(output_dir "imageio")
+
+set(ITK${factory_type}DisplayHello_LIBRARY_OUTPUT_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/${output_dir})
 
 set(NAME_SUFFIX "0")
-add_subdirectory(ITKImageIODisplayHello ITKImageIODisplayHello${NAME_SUFFIX})
+add_subdirectory(ITK${factory_type}DisplayHello ITK${factory_type}DisplayHello${NAME_SUFFIX})
 
 set(NAME_SUFFIX "1")
-add_subdirectory(ITKImageIODisplayHello ITKImageIODisplayHello${NAME_SUFFIX})
-
-set(factory_type "ImageIO")
+add_subdirectory(ITK${factory_type}DisplayHello ITK${factory_type}DisplayHello${NAME_SUFFIX})
 
 set(DYNAMIC_${factory_type}_COUNT 2)
 
@@ -63,17 +64,18 @@ message(STATUS "Number of custom dynamic '${factory_type}' factories: ${DYNAMIC_
 
 message(STATUS "")
 
-set(ITKTransformIODisplayHello_LIBRARY_OUTPUT_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/transformio)
+set(factory_type "TransformIO")
+set(output_dir "transformio")
+
+set(ITK${factory_type}DisplayHello_LIBRARY_OUTPUT_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/${output_dir})
 
 set(NAME_SUFFIX "0")
-add_subdirectory(ITKTransformIODisplayHello ITKTransformIODisplayHello${NAME_SUFFIX})
+add_subdirectory(ITK${factory_type}DisplayHello ITK${factory_type}DisplayHello${NAME_SUFFIX})
 
 set(NAME_SUFFIX "1")
-add_subdirectory(ITKTransformIODisplayHello ITKTransformIODisplayHello${NAME_SUFFIX})
+add_subdirectory(ITK${factory_type}DisplayHello ITK${factory_type}DisplayHello${NAME_SUFFIX})
 
-set(factory_type "TransformIO")
-
-set(DYNAMIC_${factory_type}_COUNT 2)
+set(DYNAMIC_${factory_type}_COUNT 0) # Not yet supported by ITK
 
 message(STATUS "Number of custom dynamic '${factory_type}' factories: ${DYNAMIC_${factory_type}_COUNT}")
 
@@ -88,7 +90,8 @@ set(ITK_${FACTORY_TYPE}_COMPONENTS
   )
 
 # Build App without static initialization
-add_subdirectory(App App${FACTORY_TYPE})
+set(APP_FACTORY_TYPE ${FACTORY_TYPE})
+add_subdirectory(App App${APP_FACTORY_TYPE})
 
 # --------------------------------------------------------------------------
 # ImageIO
@@ -104,10 +107,12 @@ set(ITK_${FACTORY_TYPE}_COMPONENTS
 
 # Build App plugin
 set(PLUGIN_NAME "AppHelloPluginLoading${FACTORY_TYPE}")
+set(PLUGIN_FACTORY_TYPE ${FACTORY_TYPE})
 add_subdirectory(AppHelloPlugin ${PLUGIN_NAME})
 
 # Build App
-add_subdirectory(App App${FACTORY_TYPE})
+set(APP_FACTORY_TYPE ${FACTORY_TYPE})
+add_subdirectory(App App${APP_FACTORY_TYPE})
 
 # --------------------------------------------------------------------------
 # TransformIO
@@ -123,10 +128,12 @@ set(ITK_${FACTORY_TYPE}_COMPONENTS
 
 # Build App plugin
 set(PLUGIN_NAME "AppHelloPluginLoading${FACTORY_TYPE}")
+set(PLUGIN_FACTORY_TYPE ${FACTORY_TYPE})
 add_subdirectory(AppHelloPlugin ${PLUGIN_NAME})
 
 # Build App
-add_subdirectory(App App${FACTORY_TYPE})
+set(APP_FACTORY_TYPE ${FACTORY_TYPE})
+add_subdirectory(App App${APP_FACTORY_TYPE})
 
 
 # --------------------------------------------------------------------------

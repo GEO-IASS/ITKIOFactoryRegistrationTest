@@ -15,10 +15,32 @@
  *  limitations under the License.
  *
  *=========================================================================*/
+
+#include "DisplayHelloTransformIOExport.h"
+
 #include "itkDisplayHelloTransformIOFactory.h"
 #include "itkCreateObjectFunction.h"
 #include "itkDisplayHelloTransformIO.h"
 #include "itkVersion.h"
+
+/**
+ * Routine that is called when the shared library is loaded by
+ * itk::ObjectFactoryBase::LoadDynamicFactories().
+ *
+ * itkLoad() is C (not C++) function.
+ */
+extern "C" {
+  DisplayHelloTransformIO_EXPORT itk::ObjectFactoryBase* itkLoad();
+}
+
+
+itk::ObjectFactoryBase* itkLoad()
+{
+  static itk::DisplayHelloTransformIOFactory::Pointer f
+    = itk::DisplayHelloTransformIOFactory::New();
+  std::cout << DISPLAYHELLO_TransformIO_FACTORY_NAME << std::endl;
+  return f;
+}
 
 namespace itk
 {
@@ -27,8 +49,6 @@ void DisplayHelloTransformIOFactory::PrintSelf(std::ostream &, Indent) const
 
 DisplayHelloTransformIOFactory::DisplayHelloTransformIOFactory()
 {
-  std::cout << DISPLAYHELLO_TRANSFORM_FACTORY_NAME << std::endl;
-
   this->RegisterOverride( "itkTransformIOBaseTemplate",
                           "itkDisplayHelloTransformIO",
                           "DisplayHello Transform float IO",
@@ -56,16 +76,4 @@ DisplayHelloTransformIOFactory::GetDescription() const
   return "DisplayHello TransformIO Factory, displays its name when registered";
 }
 
-// Undocumented API used to register during static initialization.
-// DO NOT CALL DIRECTLY.
-static bool DisplayHelloTransformIOFactoryHasBeenRegistered;
-
-void DisplayHelloTransformIOFactoryRegister__Private(void)
-{
-  if( ! DisplayHelloTransformIOFactoryHasBeenRegistered )
-    {
-    DisplayHelloTransformIOFactoryHasBeenRegistered = true;
-    DisplayHelloTransformIOFactory::RegisterOneFactory();
-    }
-}
 } // end namespace itk

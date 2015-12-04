@@ -20,11 +20,11 @@
 
 // ITK includes
 #ifdef BUILD_ImageIO_PLUGIN
-const char* what = "ImageIO";
+const char* plugin_factory_type = "ImageIO";
 # include <itkImageFileReader.h>
 #endif
 #ifdef BUILD_TransformIO_PLUGIN
-const char* what = "TransformIO";
+const char* plugin_factory_type = "TransformIO";
 # include <itkTransformFileReader.h>
 #endif
 
@@ -33,5 +33,5 @@ const char* what = "TransformIO";
 
 void AppHelloPlugin_DisplayHello()
 {
-  std::cout << "Hello from plugin loading " << what << std::endl;
+  std::cout << "Hello from plugin loading " << plugin_factory_type << std::endl;
 }

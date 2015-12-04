@@ -21,10 +21,15 @@
 #include <itkDynamicLoader.h>
 
 #ifdef BUILD_ImageIO_PLUGIN
+const char* what = "ImageIO";
 # include <itkImageFileReader.h>
 #endif
 #ifdef BUILD_TransformIO_PLUGIN
+const char* what = "TransformIO";
 # include <itkTransformFileReader.h>
+#endif
+#ifdef BUILD_WithoutIO_PLUGIN
+const char* what = "WithoutIO";
 #endif
 
 // STD includes
@@ -42,7 +47,7 @@ bool checkRegisteredFactories(int line, int expectedRegisteredFactoryCount)
 
   if (numFactories != expectedRegisteredFactoryCount)
     {
-    std::cerr << "Line " << line << " - Problem with ITK IO factory registration"
+    std::cerr << "Line " << line << " - Problem with ITK " << what << " factory registration"
               << "\n\texpectedRegisteredFactoryCount: " << expectedRegisteredFactoryCount
               << "\n\tcurrentRegisteredFactoryCount: " << numFactories
               << std::endl;
@@ -101,7 +106,7 @@ int main(int argc, char* argv[])
 
   int expectedRegisteredFactoryCountBeforePluginLoad = expectedRegisteredFactoryCount;
 
-#if !defined(BUILD_ImageIO_PLUGIN) && !defined(BUILD_TransformIO_PLUGIN)
+#if BUILD_WithoutIO_PLUGIN
    expectedRegisteredFactoryCountBeforePluginLoad = 0;
 #endif
 

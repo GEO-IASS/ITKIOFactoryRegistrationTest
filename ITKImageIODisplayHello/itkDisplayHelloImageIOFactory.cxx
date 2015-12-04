@@ -15,6 +15,9 @@
  *  limitations under the License.
  *
  *=========================================================================*/
+
+#include "DisplayHelloImageIOExport.h"
+
 #include "itkDisplayHelloImageIOFactory.h"
 #include "itkDisplayHelloImageIO.h"
 #include "itkCreateObjectFunction.h"
@@ -29,7 +32,7 @@
  * itkLoad() is C (not C++) function.
  */
 extern "C" {
-  ITKIOImageBase_EXPORT itk::ObjectFactoryBase* itkLoad();
+  DisplayHelloImageIO_EXPORT itk::ObjectFactoryBase* itkLoad();
 }
 
 
@@ -37,7 +40,7 @@ itk::ObjectFactoryBase* itkLoad()
 {
   static itk::DisplayHelloImageIOFactory::Pointer f
     = itk::DisplayHelloImageIOFactory::New();
-  std::cout << DISPLAYHELLO_IMAGE_FACTORY_NAME << std::endl;
+  std::cout << DISPLAYHELLO_ImageIO_FACTORY_NAME << std::endl;
   return f;
 }
 
