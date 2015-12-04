@@ -24,6 +24,10 @@
 const char* what = "ImageIO";
 # include <itkImageFileReader.h>
 #endif
+#ifdef BUILD_MeshIO_PLUGIN
+const char* what = "MeshIO";
+# include <itkMeshFileReader.h>
+#endif
 #ifdef BUILD_TransformIO_PLUGIN
 const char* what = "TransformIO";
 # include <itkTransformFileReader.h>

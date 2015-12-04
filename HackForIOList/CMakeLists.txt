@@ -39,15 +39,23 @@ endforeach()
 set_property(GLOBAL PROPERTY LIST_OF_ENABLED_ImageIO_MODULES ${LIST_OF_ENABLED_IMAGEIO_MODULES})
 
 # --------------------------------------------------------------------------
-# XXX This variable is missing from UseITK.cmake
-set(LIST_OF_TRANSFORMIO_FORMATS Matlab Txt HDF5 MINC)
+#message("LIST_OF_MESHIO_FORMATS: ${LIST_OF_MESHIO_FORMATS}")
 
+set(LIST_OF_ENABLED_MESHIO_MODULES )
+
+foreach(MeshFormat ${LIST_OF_MESHIO_FORMATS})
+  _update_enabled_io_list("MESHIO" "${${MeshFormat}_module_name}")
+endforeach()
+
+set_property(GLOBAL PROPERTY LIST_OF_ENABLED_MeshIO_MODULES ${LIST_OF_ENABLED_MESHIO_MODULES})
+
+# --------------------------------------------------------------------------
 #message("LIST_OF_TRANSFORMIO_FORMATS: ${LIST_OF_TRANSFORMIO_FORMATS}")
 
 set(LIST_OF_ENABLED_TRANSFORMIO_MODULES )
 
 foreach(TransformFormat ${LIST_OF_TRANSFORMIO_FORMATS})
-  _update_enabled_io_list("TRANSFORMIO" "ITKIOTransform${TransformFormat}")
+  _update_enabled_io_list("TRANSFORMIO" "${${TransformFormat}_module_name}")
 endforeach()
 
 set_property(GLOBAL PROPERTY LIST_OF_ENABLED_TransformIO_MODULES ${LIST_OF_ENABLED_TRANSFORMIO_MODULES})

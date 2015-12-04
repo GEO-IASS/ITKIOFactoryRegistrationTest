@@ -36,6 +36,9 @@ message(STATUS "")
 get_property(LIST_OF_ENABLED_ImageIO_MODULES GLOBAL PROPERTY LIST_OF_ENABLED_ImageIO_MODULES)
 message(STATUS "LIST_OF_ENABLED_ImageIO_MODULES: ${LIST_OF_ENABLED_ImageIO_MODULES}")
 
+get_property(LIST_OF_ENABLED_MeshIO_MODULES GLOBAL PROPERTY LIST_OF_ENABLED_MeshIO_MODULES)
+message(STATUS "LIST_OF_ENABLED_MeshIO_MODULES: ${LIST_OF_ENABLED_MeshIO_MODULES}")
+
 get_property(LIST_OF_ENABLED_TransformIO_MODULES GLOBAL PROPERTY LIST_OF_ENABLED_TransformIO_MODULES)
 message(STATUS "LIST_OF_ENABLED_TransformIO_MODULES: ${LIST_OF_ENABLED_TransformIO_MODULES}")
 
@@ -58,6 +61,27 @@ add_subdirectory(ITK${factory_type}DisplayHello ITK${factory_type}DisplayHello${
 set(DYNAMIC_${factory_type}_COUNT 2)
 
 message(STATUS "Number of custom dynamic '${factory_type}' factories: ${DYNAMIC_${factory_type}_COUNT}")
+
+# --------------------------------------------------------------------------
+# Build a custom ITK MeshIO plugin
+
+message(STATUS "")
+
+set(factory_type "MeshIO")
+set(output_dir "meshio")
+
+set(ITK${factory_type}DisplayHello_LIBRARY_OUTPUT_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/${output_dir})
+
+set(NAME_SUFFIX "0")
+add_subdirectory(ITK${factory_type}DisplayHello ITK${factory_type}DisplayHello${NAME_SUFFIX})
+
+set(NAME_SUFFIX "1")
+add_subdirectory(ITK${factory_type}DisplayHello ITK${factory_type}DisplayHello${NAME_SUFFIX})
+
+set(DYNAMIC_${factory_type}_COUNT 2)
+
+message(STATUS "Number of custom dynamic '${factory_type}' factories: ${DYNAMIC_${factory_type}_COUNT}")
+
 
 # --------------------------------------------------------------------------
 # Build a custom ITK TransformIO plugins
@@ -115,6 +139,27 @@ set(APP_FACTORY_TYPE ${FACTORY_TYPE})
 add_subdirectory(App App${APP_FACTORY_TYPE})
 
 # --------------------------------------------------------------------------
+# MeshIO
+
+set(FACTORY_TYPE MeshIO)
+set(ITK_${FACTORY_TYPE}_MODULES_USED
+  ${LIST_OF_ENABLED_${FACTORY_TYPE}_MODULES}
+  )
+set(ITK_${FACTORY_TYPE}_COMPONENTS
+  ITKIOMesh
+  ${ITK_${FACTORY_TYPE}_MODULES_USED}
+  )
+
+# Build App plugin
+set(PLUGIN_NAME "AppHelloPluginLoading${FACTORY_TYPE}")
+set(PLUGIN_FACTORY_TYPE ${FACTORY_TYPE})
+add_subdirectory(AppHelloPlugin ${PLUGIN_NAME})
+
+# Build App
+set(APP_FACTORY_TYPE ${FACTORY_TYPE})
+add_subdirectory(App App${APP_FACTORY_TYPE})
+
+# --------------------------------------------------------------------------
 # TransformIO
 
 set(FACTORY_TYPE TransformIO)
@@ -144,6 +189,7 @@ include(CTest)
 
 if(CMAKE_CONFIGURATION_TYPES)
   set(ITKImageIODisplayHello_LIBRARY_OUTPUT_DIRECTORY "${ITKImageIODisplayHello_LIBRARY_OUTPUT_DIRECTORY}/$<CONFIG>")
+  set(ITKMeshIODisplayHello_LIBRARY_OUTPUT_DIRECTORY "${ITKMeshIODisplayHello_LIBRARY_OUTPUT_DIRECTORY}/$<CONFIG>")
   set(ITKTransformIODisplayHello_LIBRARY_OUTPUT_DIRECTORY "${ITKTransformIODisplayHello_LIBRARY_OUTPUT_DIRECTORY}/$<CONFIG>")
 endif()
 
@@ -201,10 +247,11 @@ endmacro()
 # This variables will be used to compute the number of expected registered
 # factories.
 list(LENGTH ITK_ImageIO_MODULES_USED STATIC_ImageIO_COUNT)
+list(LENGTH ITK_MeshIO_MODULES_USED STATIC_MeshIO_COUNT)
 list(LENGTH ITK_TransformIO_MODULES_USED STATIC_TransformIO_COUNT)
 
 message(STATUS "")
-foreach(factory_type "ImageIO" "TransformIO")
+foreach(factory_type "ImageIO" "MeshIO" "TransformIO")
   message(STATUS "Number of expected statically initialized '${factory_type}' factories: ${STATIC_${factory_type}_COUNT}")
 endforeach()
 
@@ -223,6 +270,11 @@ set(app_factory_type "ImageIO")
 set(expectedRegisteredFactoryCount ${STATIC_${app_factory_type}_COUNT})
 ITKIOFactoryRegistrationByAppPlugin_add_test()
 
+# Check MeshIO statically initialized are loaded only once
+set(app_factory_type "MeshIO")
+set(expectedRegisteredFactoryCount ${STATIC_${app_factory_type}_COUNT})
+ITKIOFactoryRegistrationByAppPlugin_add_test()
+
 # Check TransformIO statically initialized are loaded only once
 set(app_factory_type "TransformIO")
 set(expectedRegisteredFactoryCount ${STATIC_${app_factory_type}_COUNT})
@@ -234,6 +286,13 @@ set(with_app_plugin TRUE)
 # Check App without ImageIO and plugin has registered factories
 set(app_factory_type "WithoutIO")
 set(plugin_factory_type "ImageIO")
+set(expectedRegisteredFactoryCount ${STATIC_${plugin_factory_type}_COUNT})
+set(plugin_dynamic_factory_type "WithoutIO")
+ITKIOFactoryRegistrationByAppPlugin_add_test()
+
+# Check App without MeshIO and plugin has registered factories
+set(app_factory_type "WithoutIO")
+set(plugin_factory_type "MeshIO")
 set(expectedRegisteredFactoryCount ${STATIC_${plugin_factory_type}_COUNT})
 set(plugin_dynamic_factory_type "WithoutIO")
 ITKIOFactoryRegistrationByAppPlugin_add_test()
@@ -252,6 +311,13 @@ set(expectedRegisteredFactoryCount ${STATIC_${plugin_factory_type}_COUNT})
 set(plugin_dynamic_factory_type "WithoutIO")
 ITKIOFactoryRegistrationByAppPlugin_add_test()
 
+# Check MeshIO statically initialized are loaded only once
+set(app_factory_type "MeshIO")
+set(plugin_factory_type "MeshIO")
+set(expectedRegisteredFactoryCount ${STATIC_${plugin_factory_type}_COUNT})
+set(plugin_dynamic_factory_type "WithoutIO")
+ITKIOFactoryRegistrationByAppPlugin_add_test()
+
 # Check TransformIO statically initialized are loaded only once
 set(app_factory_type "TransformIO")
 set(plugin_factory_type "TransformIO")
@@ -265,6 +331,14 @@ set(plugin_factory_type "ImageIO")
 set(plugin_dynamic_factory_type "ImageIO")
 math(EXPR expectedRegisteredFactoryCount "${STATIC_${plugin_factory_type}_COUNT} + ${DYNAMIC_${plugin_dynamic_factory_type}_COUNT}")
 ITKIOFactoryRegistrationByAppPlugin_add_test()
+
+# Check shared MeshIO along with statically initialized ones are loaded only once
+set(app_factory_type "MeshIO")
+set(plugin_factory_type "MeshIO")
+set(plugin_dynamic_factory_type "MeshIO")
+math(EXPR expectedRegisteredFactoryCount "${STATIC_${plugin_factory_type}_COUNT} + ${DYNAMIC_${plugin_dynamic_factory_type}_COUNT}")
+# XXX MeshIO plugin are not supported
+#ITKIOFactoryRegistrationByAppPlugin_add_test()
 
 # Check shared TransformIO along with statically initialized ones are loaded only once
 set(app_factory_type "TransformIO")

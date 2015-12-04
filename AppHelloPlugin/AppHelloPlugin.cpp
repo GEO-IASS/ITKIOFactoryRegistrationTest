@@ -23,6 +23,10 @@
 const char* plugin_factory_type = "ImageIO";
 # include <itkImageFileReader.h>
 #endif
+#ifdef BUILD_MeshIO_PLUGIN
+const char* plugin_factory_type = "MeshIO";
+# include <itkMeshFileReader.h>
+#endif
 #ifdef BUILD_TransformIO_PLUGIN
 const char* plugin_factory_type = "TransformIO";
 # include <itkTransformFileReader.h>
