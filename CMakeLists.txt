@@ -43,65 +43,33 @@ get_property(LIST_OF_ENABLED_TransformIO_MODULES GLOBAL PROPERTY LIST_OF_ENABLED
 message(STATUS "LIST_OF_ENABLED_TransformIO_MODULES: ${LIST_OF_ENABLED_TransformIO_MODULES}")
 
 # --------------------------------------------------------------------------
-# Build a custom ITK ImageIO plugin
+# Macro to build custom IO factories given a factory type
 
-message(STATUS "")
+macro(build_custom_io_factories factory_type)
 
-set(factory_type "ImageIO")
-set(output_dir "imageio")
+  message(STATUS "")
 
-set(ITK${factory_type}DisplayHello_LIBRARY_OUTPUT_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/${output_dir})
+  string(TOLOWER ${factory_type} output_dir)
 
-set(NAME_SUFFIX "0")
-add_subdirectory(ITK${factory_type}DisplayHello ITK${factory_type}DisplayHello${NAME_SUFFIX})
+  set(ITK${factory_type}DisplayHello_LIBRARY_OUTPUT_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/${output_dir})
 
-set(NAME_SUFFIX "1")
-add_subdirectory(ITK${factory_type}DisplayHello ITK${factory_type}DisplayHello${NAME_SUFFIX})
+  set(NAME_SUFFIX "0")
+  add_subdirectory(ITK${factory_type}DisplayHello ITK${factory_type}DisplayHello${NAME_SUFFIX})
 
-set(DYNAMIC_${factory_type}_COUNT 2)
+  set(NAME_SUFFIX "1")
+  add_subdirectory(ITK${factory_type}DisplayHello ITK${factory_type}DisplayHello${NAME_SUFFIX})
 
-message(STATUS "Number of custom dynamic '${factory_type}' factories: ${DYNAMIC_${factory_type}_COUNT}")
+  set(DYNAMIC_${factory_type}_COUNT 2)
 
-# --------------------------------------------------------------------------
-# Build a custom ITK MeshIO plugin
-
-message(STATUS "")
-
-set(factory_type "MeshIO")
-set(output_dir "meshio")
-
-set(ITK${factory_type}DisplayHello_LIBRARY_OUTPUT_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/${output_dir})
-
-set(NAME_SUFFIX "0")
-add_subdirectory(ITK${factory_type}DisplayHello ITK${factory_type}DisplayHello${NAME_SUFFIX})
-
-set(NAME_SUFFIX "1")
-add_subdirectory(ITK${factory_type}DisplayHello ITK${factory_type}DisplayHello${NAME_SUFFIX})
-
-set(DYNAMIC_${factory_type}_COUNT 2)
-
-message(STATUS "Number of custom dynamic '${factory_type}' factories: ${DYNAMIC_${factory_type}_COUNT}")
-
+  message(STATUS "Number of custom dynamic '${factory_type}' factories: ${DYNAMIC_${factory_type}_COUNT}")
+endmacro()
 
 # --------------------------------------------------------------------------
-# Build a custom ITK TransformIO plugins
+# Build a custom IO factories
 
-message(STATUS "")
-
-set(factory_type "TransformIO")
-set(output_dir "transformio")
-
-set(ITK${factory_type}DisplayHello_LIBRARY_OUTPUT_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/${output_dir})
-
-set(NAME_SUFFIX "0")
-add_subdirectory(ITK${factory_type}DisplayHello ITK${factory_type}DisplayHello${NAME_SUFFIX})
-
-set(NAME_SUFFIX "1")
-add_subdirectory(ITK${factory_type}DisplayHello ITK${factory_type}DisplayHello${NAME_SUFFIX})
-
-set(DYNAMIC_${factory_type}_COUNT 0) # Not yet supported by ITK
-
-message(STATUS "Number of custom dynamic '${factory_type}' factories: ${DYNAMIC_${factory_type}_COUNT}")
+build_custom_io_factories("ImageIO")
+build_custom_io_factories("MeshIO")
+build_custom_io_factories("TransformIO")
 
 # --------------------------------------------------------------------------
 # Build App without IO factories
