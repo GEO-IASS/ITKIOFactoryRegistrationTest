@@ -72,14 +72,32 @@ build_custom_io_factories("MeshIO")
 build_custom_io_factories("TransformIO")
 
 # --------------------------------------------------------------------------
+# Macro to find and include ITK considering factory type
+macro(define_itk_components)
+  if("${APP_MAIN_${FACTORY_TYPE}_ITK_COMPONENT}" STREQUAL "")
+    message(FATAL_ERROR "APP_MAIN_${FACTORY_TYPE}_ITK_COMPONENT is expected to be set !")
+  endif()
+  set(ITK_${FACTORY_TYPE}_MODULES_USED
+    ${LIST_OF_ENABLED_${FACTORY_TYPE}_MODULES}
+    )
+  set(ITK_${FACTORY_TYPE}_COMPONENTS
+    ${APP_MAIN_${FACTORY_TYPE}_ITK_COMPONENT}
+    ${ITK_${FACTORY_TYPE}_MODULES_USED}
+    )
+endmacro()
+
+set(LIST_OF_ENABLED_WithoutIO_MODULES )
+
+set(APP_MAIN_WithoutIO_ITK_COMPONENT ITKCommon)
+set(APP_MAIN_ImageIO_ITK_COMPONENT ITKIOImageBase)
+set(APP_MAIN_MeshIO_ITK_COMPONENT ITKIOMeshBase)
+set(APP_MAIN_TransformIO_ITK_COMPONENT ITKIOTransformBase)
+
+# --------------------------------------------------------------------------
 # Build App without IO factories
+
 set(FACTORY_TYPE "WithoutIO")
-set(ITK_${FACTORY_TYPE}_MODULES_USED
-  )
-set(ITK_${FACTORY_TYPE}_COMPONENTS
-  ITKCommon
-  ${ITK_${FACTORY_TYPE}_MODULES_USED}
-  )
+define_itk_components()
 
 # Build App without static initialization
 set(APP_FACTORY_TYPE ${FACTORY_TYPE})
@@ -89,13 +107,7 @@ add_subdirectory(App App${APP_FACTORY_TYPE})
 # ImageIO
 
 set(FACTORY_TYPE ImageIO)
-set(ITK_${FACTORY_TYPE}_MODULES_USED
-  ${LIST_OF_ENABLED_${FACTORY_TYPE}_MODULES}
-  )
-set(ITK_${FACTORY_TYPE}_COMPONENTS
-  ITKIOImageBase
-  ${ITK_${FACTORY_TYPE}_MODULES_USED}
-  )
+define_itk_components()
 
 # Build App plugin
 set(PLUGIN_NAME "AppHelloPluginLoading${FACTORY_TYPE}")
@@ -110,13 +122,7 @@ add_subdirectory(App App${APP_FACTORY_TYPE})
 # MeshIO
 
 set(FACTORY_TYPE MeshIO)
-set(ITK_${FACTORY_TYPE}_MODULES_USED
-  ${LIST_OF_ENABLED_${FACTORY_TYPE}_MODULES}
-  )
-set(ITK_${FACTORY_TYPE}_COMPONENTS
-  ITKIOMeshBase
-  ${ITK_${FACTORY_TYPE}_MODULES_USED}
-  )
+define_itk_components()
 
 # Build App plugin
 set(PLUGIN_NAME "AppHelloPluginLoading${FACTORY_TYPE}")
@@ -131,13 +137,7 @@ add_subdirectory(App App${APP_FACTORY_TYPE})
 # TransformIO
 
 set(FACTORY_TYPE TransformIO)
-set(ITK_${FACTORY_TYPE}_MODULES_USED
-  ${LIST_OF_ENABLED_${FACTORY_TYPE}_MODULES}
-  )
-set(ITK_${FACTORY_TYPE}_COMPONENTS
-  ITKIOTransformBase
-  ${ITK_${FACTORY_TYPE}_MODULES_USED}
-  )
+define_itk_components()
 
 # Build App plugin
 set(PLUGIN_NAME "AppHelloPluginLoading${FACTORY_TYPE}")
