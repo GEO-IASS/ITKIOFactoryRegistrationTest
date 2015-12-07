@@ -49,6 +49,9 @@ macro(build_custom_io_factories factory_type)
 
   message(STATUS "")
 
+  set(INSTANTIATE_${factory_type}_TARGETS )
+  set(INSTANTIATE_${factory_type}_INCLUDE_DIRS )
+
   string(TOLOWER ${factory_type} output_dir)
 
   set(ITK${factory_type}DisplayHello_LIBRARY_OUTPUT_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/${output_dir})
@@ -56,12 +59,32 @@ macro(build_custom_io_factories factory_type)
   set(NAME_SUFFIX "0")
   add_subdirectory(ITK${factory_type}DisplayHello ITK${factory_type}DisplayHello${NAME_SUFFIX})
 
+  list(APPEND INSTANTIATE_${factory_type}_TARGETS
+    DisplayHello${factory_type}_${NAME_SUFFIX}
+    )
+
+  list(APPEND INSTANTIATE_${factory_type}_INCLUDE_DIRS
+    ${DisplayHello${factory_type}_${NAME_SUFFIX}_SOURCE_DIR}
+    )
+
   set(NAME_SUFFIX "1")
   add_subdirectory(ITK${factory_type}DisplayHello ITK${factory_type}DisplayHello${NAME_SUFFIX})
+
+  list(APPEND INSTANTIATE_${factory_type}_TARGETS
+    DisplayHello${factory_type}_${NAME_SUFFIX}
+    )
+
+  list(APPEND INSTANTIATE_${factory_type}_INCLUDE_DIRS
+    ${DisplayHello${factory_type}_${NAME_SUFFIX}_SOURCE_DIR}
+    )
 
   set(DYNAMIC_${factory_type}_COUNT 2)
 
   message(STATUS "Number of custom dynamic '${factory_type}' factories: ${DYNAMIC_${factory_type}_COUNT}")
+
+  list(APPEND INSTANTIATE_${factory_type}_INCLUDE_DIRS
+    ${${factory_type}_INCLUDE_DIRS}
+    )
 endmacro()
 
 # --------------------------------------------------------------------------
@@ -70,6 +93,14 @@ endmacro()
 build_custom_io_factories("ImageIO")
 build_custom_io_factories("MeshIO")
 build_custom_io_factories("TransformIO")
+
+# --------------------------------------------------------------------------
+# Macro allowing to disable io factories instantiation
+macro(disable_io_factories_instantiation)
+  set(INSTANTIATE_ImageIO 0)
+  set(INSTANTIATE_MeshIO 0)
+  set(INSTANTIATE_TransformIO 0)
+endmacro()
 
 # --------------------------------------------------------------------------
 # Macro to find and include ITK considering factory type
@@ -101,6 +132,10 @@ define_itk_components()
 
 # Build App without static initialization
 set(APP_FACTORY_TYPE ${FACTORY_TYPE})
+disable_io_factories_instantiation()
+set(INSTANTIATE_ImageIO 1)
+set(INSTANTIATE_MeshIO 1)
+set(INSTANTIATE_TransformIO 1)
 add_subdirectory(App App${APP_FACTORY_TYPE})
 
 # --------------------------------------------------------------------------
@@ -112,10 +147,13 @@ define_itk_components()
 # Build App plugin
 set(PLUGIN_NAME "AppHelloPluginLoading${FACTORY_TYPE}")
 set(PLUGIN_FACTORY_TYPE ${FACTORY_TYPE})
+disable_io_factories_instantiation()
 add_subdirectory(AppHelloPlugin ${PLUGIN_NAME})
 
 # Build App
 set(APP_FACTORY_TYPE ${FACTORY_TYPE})
+disable_io_factories_instantiation()
+set(INSTANTIATE_ImageIO 1)
 add_subdirectory(App App${APP_FACTORY_TYPE})
 
 # --------------------------------------------------------------------------
@@ -127,10 +165,13 @@ define_itk_components()
 # Build App plugin
 set(PLUGIN_NAME "AppHelloPluginLoading${FACTORY_TYPE}")
 set(PLUGIN_FACTORY_TYPE ${FACTORY_TYPE})
+disable_io_factories_instantiation()
 add_subdirectory(AppHelloPlugin ${PLUGIN_NAME})
 
 # Build App
 set(APP_FACTORY_TYPE ${FACTORY_TYPE})
+disable_io_factories_instantiation()
+set(INSTANTIATE_MeshIO 1)
 add_subdirectory(App App${APP_FACTORY_TYPE})
 
 # --------------------------------------------------------------------------
@@ -142,10 +183,13 @@ define_itk_components()
 # Build App plugin
 set(PLUGIN_NAME "AppHelloPluginLoading${FACTORY_TYPE}")
 set(PLUGIN_FACTORY_TYPE ${FACTORY_TYPE})
+disable_io_factories_instantiation()
 add_subdirectory(AppHelloPlugin ${PLUGIN_NAME})
 
 # Build App
 set(APP_FACTORY_TYPE ${FACTORY_TYPE})
+disable_io_factories_instantiation()
+set(INSTANTIATE_TransformIO 1)
 add_subdirectory(App App${APP_FACTORY_TYPE})
 
 
@@ -194,7 +238,14 @@ macro(ITKIOFactoryRegistrationByAppPlugin_add_test)
       ${extra_args}
     )
 
-  set(pass_regex "expectedRegisteredFactoryCountBeforePluginLoad: ${expectedRegisteredFactoryCountBeforePluginLoad}\n")
+  set(pass_regex )
+  if(app_factory_type STREQUAL "WithoutIO")
+    set(pass_regex "${pass_regex}APP_INSTANTIATE_ImageIO null\n")
+    set(pass_regex "${pass_regex}APP_INSTANTIATE_MeshIO null\n")
+    set(pass_regex "${pass_regex}APP_INSTANTIATE_TransformIO_float null\n")
+    set(pass_regex "${pass_regex}APP_INSTANTIATE_TransformIO_double null\n")
+  endif()
+  set(pass_regex "${pass_regex}expectedRegisteredFactoryCountBeforePluginLoad: ${expectedRegisteredFactoryCountBeforePluginLoad}\n")
   set(pass_regex "${pass_regex}expectedRegisteredFactoryCount: ${expectedRegisteredFactoryCount}\n")
   if(NOT plugin_dynamic_factory_type STREQUAL "WithoutIO")
     set(pass_regex "${pass_regex}DisplayHello${plugin_dynamic_factory_type}_[01]\n")
@@ -202,6 +253,18 @@ macro(ITKIOFactoryRegistrationByAppPlugin_add_test)
   endif()
   if(with_app_plugin)
     set(pass_regex "${pass_regex}Hello from plugin loading ${plugin_factory_type}\n")
+  endif()
+  if(NOT plugin_dynamic_factory_type STREQUAL "WithoutIO")
+    if(plugin_dynamic_factory_type STREQUAL "ImageIO")
+      set(pass_regex "${pass_regex}APP_INSTANTIATE_ImageIO DisplayHelloImageIO\n")
+    endif()
+    if(plugin_dynamic_factory_type STREQUAL "MeshIO")
+      set(pass_regex "${pass_regex}APP_INSTANTIATE_MeshIO DisplayHelloMeshIO\n")
+    endif()
+    if(plugin_dynamic_factory_type STREQUAL "TransformIO")
+      set(pass_regex "${pass_regex}APP_INSTANTIATE_TransformIO_float DisplayHelloTransformIOTemplate\n")
+      set(pass_regex "${pass_regex}APP_INSTANTIATE_TransformIO_double DisplayHelloTransformIOTemplate\n")
+    endif()
   endif()
   set_tests_properties(${testname}
     PROPERTIES
@@ -305,13 +368,11 @@ set(app_factory_type "MeshIO")
 set(plugin_factory_type "MeshIO")
 set(plugin_dynamic_factory_type "MeshIO")
 math(EXPR expectedRegisteredFactoryCount "${STATIC_${plugin_factory_type}_COUNT} + ${DYNAMIC_${plugin_dynamic_factory_type}_COUNT}")
-# XXX MeshIO plugin are not supported
-#ITKIOFactoryRegistrationByAppPlugin_add_test()
+ITKIOFactoryRegistrationByAppPlugin_add_test()
 
 # Check shared TransformIO along with statically initialized ones are loaded only once
 set(app_factory_type "TransformIO")
 set(plugin_factory_type "TransformIO")
 set(plugin_dynamic_factory_type "TransformIO")
 math(EXPR expectedRegisteredFactoryCount "${STATIC_${plugin_factory_type}_COUNT} + ${DYNAMIC_${plugin_dynamic_factory_type}_COUNT}")
-# XXX TransformIO plugin are not supported
-#ITKIOFactoryRegistrationByAppPlugin_add_test()
+ITKIOFactoryRegistrationByAppPlugin_add_test()

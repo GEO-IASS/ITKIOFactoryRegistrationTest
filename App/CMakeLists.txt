@@ -33,3 +33,15 @@ set_target_properties(${PROJECT_NAME}
   PROPERTIES
     COMPILE_DEFINITIONS BUILD_${APP_FACTORY_TYPE}_PLUGIN
   )
+
+# Link against selected factories
+foreach(factory_type "ImageIO" "TransformIO" "MeshIO")
+  if(INSTANTIATE_${factory_type})
+    target_link_libraries(${PROJECT_NAME} ${INSTANTIATE_${factory_type}_TARGETS})
+    include_directories(${INSTANTIATE_${factory_type}_INCLUDE_DIRS})
+    set_property(TARGET ${PROJECT_NAME}
+      APPEND
+      PROPERTY COMPILE_DEFINITIONS INSTANTIATE_${factory_type}
+      )
+  endif()
+endforeach()

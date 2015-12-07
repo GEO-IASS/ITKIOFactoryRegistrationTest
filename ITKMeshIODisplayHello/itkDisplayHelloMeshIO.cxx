@@ -36,7 +36,11 @@ bool
 DisplayHelloMeshIO
 ::CanReadFile(const char *fileName)
 {
-  return false;
+  if ( !fileName )
+    {
+    return false;
+    }
+  return std::string(fileName) == "MeshIO.hello";
 }
 
 bool

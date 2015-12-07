@@ -38,7 +38,7 @@ include(${ITK_USE_FILE})
 # --------------------------------------------------------------------------
 
 set(io_factory_name ${PROJECT_NAME})
-add_library(${io_factory_name} MODULE
+add_library(${io_factory_name} SHARED
   ${factory_source}
   )
 target_link_libraries(${io_factory_name} LINK_PUBLIC ${ITK_LIBRARIES})
@@ -54,3 +54,7 @@ generate_export_header(${io_factory_name}
   EXPORT_MACRO_NAME ${itk-module}_EXPORT
   NO_EXPORT_MACRO_NAME ${itk-module}_HIDDEN
   STATIC_DEFINE ITK_STATIC )
+
+
+itk_module_load(${factory_module})
+set(${factory_type}_INCLUDE_DIRS ${${factory_module}_INCLUDE_DIRS} PARENT_SCOPE)

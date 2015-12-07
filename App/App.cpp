@@ -36,6 +36,22 @@ const char* what = "TransformIO";
 const char* what = "WithoutIO";
 #endif
 
+#ifdef INSTANTIATE_ImageIO
+# include "itkImageIOBase.h"
+# include "itkImageIOFactory.h"
+#endif
+
+#ifdef INSTANTIATE_MeshIO
+# include "itkMeshIOFactory.h"
+#endif
+
+#ifdef INSTANTIATE_TransformIO
+# include "itkTransformIOBase.h"
+# include "itkTransformIOFactory.h"
+#endif
+
+#include "../itkInstantiateFactoryObjectTestHelper.hxx"
+
 // STD includes
 #include <cstdlib>
 #include <cstring>
@@ -100,11 +116,13 @@ int main(int argc, char* argv[])
     load_plugin = false;
     }
 
+  bool with_dynamic_io_factory = false;
+
   if (argc > 3)
     {
-    if ( strcmp(argv[2], "--with-dynamic-io-factory") == 0 )
+    if ( strcmp(argv[3], "--with-dynamic-io-factory") == 0 )
       {
-      ++expectedRegisteredFactoryCount;
+      with_dynamic_io_factory = true;
       }
     }
 
@@ -112,6 +130,15 @@ int main(int argc, char* argv[])
 
 #if BUILD_WithoutIO_PLUGIN
    expectedRegisteredFactoryCountBeforePluginLoad = 0;
+
+   if (!itk::instantiateFactoryObjects("APP",
+                                       /* expectedImageIO= */ false,
+                                       /* expectedMeshIO= */ false,
+                                       /* expectedTransformIO= */ false))
+     {
+     return EXIT_FAILURE;
+     }
+
 #endif
 
   std::cout << "expectedRegisteredFactoryCountBeforePluginLoad: "
@@ -171,6 +198,17 @@ int main(int argc, char* argv[])
   if ( !checkRegisteredFactories(__LINE__, expectedRegisteredFactoryCount) )
     {
     return EXIT_FAILURE;
+    }
+
+  if (with_dynamic_io_factory)
+    {
+    if (!itk::instantiateFactoryObjects("APP",
+                                        /* expectedImageIO= */ true,
+                                        /* expectedMeshIO= */ true,
+                                        /* expectedTransformIO= */ true))
+      {
+      return EXIT_FAILURE;
+      }
     }
 
   return EXIT_SUCCESS;

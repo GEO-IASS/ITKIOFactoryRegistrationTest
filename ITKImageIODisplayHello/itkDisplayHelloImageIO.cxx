@@ -36,9 +36,13 @@ DisplayHelloImageIO
 
 bool
 DisplayHelloImageIO
-::CanReadFile(const char* filename)
+::CanReadFile(const char* fileName)
 {
-  return false;
+  if ( !fileName )
+    {
+    return false;
+    }
+  return std::string(fileName) == "ImageIO.hello";
 }
 
 void

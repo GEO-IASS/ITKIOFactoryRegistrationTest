@@ -20,6 +20,8 @@
 
 #include "itkDisplayHelloTransformIO.h"
 
+#include "../itkStringifyType.hxx"
+
 namespace itk
 {
 template<typename TParametersValueType>
@@ -37,8 +39,17 @@ bool
 DisplayHelloTransformIOTemplate<TParametersValueType>
 ::CanReadFile(const char *fileName)
 {
-  bool recognizedExtension = false;
-  return recognizedExtension;
+  typedef itk::StringifyType<TParametersValueType> TypeName;
+
+  if ( !fileName )
+    {
+    return false;
+    }
+
+  std::string recognizedFileName =
+      std::string("TransformIO.") + TypeName::name + std::string(".hello");
+
+  return std::string(fileName) == recognizedFileName;
 }
 
 template<typename TParametersValueType>
