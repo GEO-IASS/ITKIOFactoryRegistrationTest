@@ -210,7 +210,7 @@ endif()
 
 macro(ITKIOFactoryRegistrationByAppPlugin_add_test)
   set(extra_args "None")
-  set(testenv )
+  set(testenvs)
   set(expectedRegisteredFactoryCountBeforePluginLoad 0)
   set(qualifier "WithoutIO")
   if(NOT app_factory_type STREQUAL "WithoutIO")
@@ -227,8 +227,11 @@ macro(ITKIOFactoryRegistrationByAppPlugin_add_test)
     endif()
     if(NOT plugin_dynamic_factory_type STREQUAL "WithoutIO")
       set(qualifier "${qualifier}_WithDynamic${plugin_dynamic_factory_type}")
-      list(APPEND extra_args "--with-dynamic-io-factory")
-      set(testenv ENVIRONMENT "ITK_AUTOLOAD_PATH=${ITK${plugin_dynamic_factory_type}DisplayHello_LIBRARY_OUTPUT_DIRECTORY}")
+      list(APPEND testenvs "ITK_AUTOLOAD_PATH=${ITK${plugin_dynamic_factory_type}DisplayHello_LIBRARY_OUTPUT_DIRECTORY}")
+      if(instantiate_dynamic_factory_object STREQUAL "app")
+        list(APPEND extra_args "--with-dynamic-io-factory-instantiation")
+        set(qualifier ${qualifier}_WithAppInstantiateDynamicFactoryObject)
+      endif()
     endif()
   else()
     set(qualifier "${qualifier}_WithoutPlugin")
@@ -272,8 +275,10 @@ macro(ITKIOFactoryRegistrationByAppPlugin_add_test)
   set_tests_properties(${testname}
     PROPERTIES
       PASS_REGULAR_EXPRESSION "^${pass_regex}$"
-      ${testenv}
   )
+  foreach(testenv ${testenvs})
+    set_property(TEST ${testname} APPEND PROPERTY ENVIRONMENT ${testenv})
+  endforeach()
 endmacro()
 
 
@@ -358,6 +363,10 @@ set(plugin_factory_type "TransformIO")
 set(expectedRegisteredFactoryCount ${STATIC_${plugin_factory_type}_COUNT})
 set(plugin_dynamic_factory_type "WithoutIO")
 ITKIOFactoryRegistrationByAppPlugin_add_test()
+
+# --------------------------------------------------------------------------
+set(with_app_plugin TRUE)
+set(instantiate_dynamic_factory_object "app")
 
 # Check shared ImageIO along with statically initialized ones are loaded only once
 set(app_factory_type "ImageIO")

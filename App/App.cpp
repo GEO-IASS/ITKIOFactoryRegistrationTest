@@ -101,7 +101,7 @@ int main(int argc, char* argv[])
               << "\nUsage: App"
               << " <expectedRegisteredFactoryCount>"
               << " /path/to/AppHelloPlugin|None"
-              << " [--with-dynamic-io-factory]"
+              << " [--with-dynamic-io-factory-instantiation]"
               << std::endl;
     return EXIT_FAILURE;
     }
@@ -116,13 +116,13 @@ int main(int argc, char* argv[])
     load_plugin = false;
     }
 
-  bool with_dynamic_io_factory = false;
+  bool with_dynamic_io_factory_instantiation = false;
 
   if (argc > 3)
     {
-    if ( strcmp(argv[3], "--with-dynamic-io-factory") == 0 )
+    if ( strcmp(argv[3], "--with-dynamic-io-factory-instantiation") == 0 )
       {
-      with_dynamic_io_factory = true;
+      with_dynamic_io_factory_instantiation = true;
       }
     }
 
@@ -200,7 +200,7 @@ int main(int argc, char* argv[])
     return EXIT_FAILURE;
     }
 
-  if (with_dynamic_io_factory)
+  if (with_dynamic_io_factory_instantiation)
     {
     if (!itk::instantiateFactoryObjects("APP",
                                         /* expectedImageIO= */ true,
