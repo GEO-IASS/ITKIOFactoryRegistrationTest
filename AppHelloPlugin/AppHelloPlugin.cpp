@@ -18,6 +18,9 @@
 
 #include "AppHelloPlugin.h"
 
+// STD includes
+#include <cstdlib>
+
 // ITK includes
 #ifdef BUILD_ImageIO_PLUGIN
 const char* plugin_factory_type = "ImageIO";
@@ -32,10 +35,34 @@ const char* plugin_factory_type = "TransformIO";
 # include <itkTransformFileReader.h>
 #endif
 
+#ifdef INSTANTIATE_ImageIO
+# include "itkImageIOFactory.h"
+#endif
+
+#ifdef INSTANTIATE_MeshIO
+# include "itkMeshIOFactory.h"
+#endif
+
+#ifdef INSTANTIATE_TransformIO
+# include "itkTransformIOFactory.h"
+#endif
+
 // STD includes
 #include <iostream>
+
+#include "../itkInstantiateFactoryObjectTestHelper.hxx"
 
 void AppHelloPlugin_DisplayHello()
 {
   std::cout << "Hello from plugin loading " << plugin_factory_type << std::endl;
+
+  const char* envName = "WITH_PLUGIN_DYNAMIC_IO_FACTORY_INSTANTIATION";
+  char* envValue = getenv( envName );
+  if (envValue && atoi(envValue))
+    {
+    itk::instantiateFactoryObjects("APP",
+                                   /* expectedImageIO= */ true,
+                                   /* expectedMeshIO= */ true,
+                                   /* expectedTransformIO= */ true);
+    }
 }

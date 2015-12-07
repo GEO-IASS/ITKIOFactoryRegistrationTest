@@ -38,6 +38,20 @@ set_target_properties(${PLUGIN_NAME}
 
 generate_export_header(${PLUGIN_NAME} BASE_NAME apphelloplugin)
 
+# Link against selected factories
+foreach(factory_type "ImageIO" "TransformIO" "MeshIO")
+  if(INSTANTIATE_${factory_type})
+    target_link_libraries(${PLUGIN_NAME} ${INSTANTIATE_${factory_type}_TARGETS})
+    include_directories(${INSTANTIATE_${factory_type}_INCLUDE_DIRS})
+    set_property(TARGET ${PLUGIN_NAME}
+      APPEND
+      PROPERTY COMPILE_DEFINITIONS INSTANTIATE_${factory_type}
+      )
+  endif()
+endforeach()
+
+
+
 # --------------------------------------------------------------------------
 # An standalone CLI linked against the plugin
 # --------------------------------------------------------------------------

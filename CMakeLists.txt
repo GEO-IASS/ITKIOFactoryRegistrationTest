@@ -149,6 +149,7 @@ define_itk_components()
 set(PLUGIN_NAME "AppHelloPluginLoading${FACTORY_TYPE}")
 set(PLUGIN_FACTORY_TYPE ${FACTORY_TYPE})
 disable_io_factories_instantiation()
+set(INSTANTIATE_ImageIO 1)
 add_subdirectory(AppHelloPlugin ${PLUGIN_NAME})
 
 # Build App
@@ -168,6 +169,7 @@ define_itk_components()
 set(PLUGIN_NAME "AppHelloPluginLoading${FACTORY_TYPE}")
 set(PLUGIN_FACTORY_TYPE ${FACTORY_TYPE})
 disable_io_factories_instantiation()
+set(INSTANTIATE_MeshIO 1)
 add_subdirectory(AppHelloPlugin ${PLUGIN_NAME})
 
 # Build App
@@ -187,6 +189,7 @@ define_itk_components()
 set(PLUGIN_NAME "AppHelloPluginLoading${FACTORY_TYPE}")
 set(PLUGIN_FACTORY_TYPE ${FACTORY_TYPE})
 disable_io_factories_instantiation()
+set(INSTANTIATE_TransformIO 1)
 add_subdirectory(AppHelloPlugin ${PLUGIN_NAME})
 
 # Build App
@@ -231,6 +234,9 @@ macro(ITKIOFactoryRegistrationByAppPlugin_add_test)
       if(instantiate_dynamic_factory_object STREQUAL "app")
         list(APPEND extra_args "--with-dynamic-io-factory-instantiation")
         set(qualifier ${qualifier}_WithAppInstantiateDynamicFactoryObject)
+      elseif(instantiate_dynamic_factory_object STREQUAL "plugin")
+        set(qualifier ${qualifier}_WithPluginInstantiateDynamicFactoryObject)
+        list(APPEND testenvs "WITH_PLUGIN_DYNAMIC_IO_FACTORY_INSTANTIATION=1")
       endif()
     endif()
   else()
@@ -298,6 +304,7 @@ endforeach()
 set(with_app_plugin FALSE)
 set(plugin_factory_type "WithoutIO")
 set(plugin_dynamic_factory_type "WithoutIO")
+set(instantiate_dynamic_factory_object "")
 
 # Check App without IOFactory has zero factory registered
 set(app_factory_type "WithoutIO")
@@ -367,6 +374,31 @@ ITKIOFactoryRegistrationByAppPlugin_add_test()
 # --------------------------------------------------------------------------
 set(with_app_plugin TRUE)
 set(instantiate_dynamic_factory_object "app")
+
+# Check shared ImageIO along with statically initialized ones are loaded only once
+set(app_factory_type "ImageIO")
+set(plugin_factory_type "ImageIO")
+set(plugin_dynamic_factory_type "ImageIO")
+math(EXPR expectedRegisteredFactoryCount "${STATIC_${plugin_factory_type}_COUNT} + ${DYNAMIC_${plugin_dynamic_factory_type}_COUNT}")
+ITKIOFactoryRegistrationByAppPlugin_add_test()
+
+# Check shared MeshIO along with statically initialized ones are loaded only once
+set(app_factory_type "MeshIO")
+set(plugin_factory_type "MeshIO")
+set(plugin_dynamic_factory_type "MeshIO")
+math(EXPR expectedRegisteredFactoryCount "${STATIC_${plugin_factory_type}_COUNT} + ${DYNAMIC_${plugin_dynamic_factory_type}_COUNT}")
+ITKIOFactoryRegistrationByAppPlugin_add_test()
+
+# Check shared TransformIO along with statically initialized ones are loaded only once
+set(app_factory_type "TransformIO")
+set(plugin_factory_type "TransformIO")
+set(plugin_dynamic_factory_type "TransformIO")
+math(EXPR expectedRegisteredFactoryCount "${STATIC_${plugin_factory_type}_COUNT} + ${DYNAMIC_${plugin_dynamic_factory_type}_COUNT}")
+ITKIOFactoryRegistrationByAppPlugin_add_test()
+
+# --------------------------------------------------------------------------
+set(with_app_plugin TRUE)
+set(instantiate_dynamic_factory_object "plugin")
 
 # Check shared ImageIO along with statically initialized ones are loaded only once
 set(app_factory_type "ImageIO")
