@@ -13,7 +13,7 @@ foreach(p
   endif()
 endforeach()
 
-project(ITKIOFactoryRegistrationByAppPlugin)
+project(ITKIOFactoryRegistration)
 
 set(ITK_MINIMUM_REQUIRED_VERSION 4.8)
 
@@ -211,7 +211,7 @@ if(CMAKE_CONFIGURATION_TYPES)
   set(ITKTransformIODisplayHello_LIBRARY_OUTPUT_DIRECTORY "${ITKTransformIODisplayHello_LIBRARY_OUTPUT_DIRECTORY}/$<CONFIG>")
 endif()
 
-macro(ITKIOFactoryRegistrationByAppPlugin_add_test)
+macro(ITKIOFactoryRegistration_add_test)
   set(extra_args "None")
   set(testenvs)
   set(expectedRegisteredFactoryCountBeforePluginLoad 0)
@@ -309,22 +309,22 @@ set(instantiate_dynamic_factory_object "")
 # Check App without IOFactory has zero factory registered
 set(app_factory_type "WithoutIO")
 set(expectedRegisteredFactoryCount 0)
-ITKIOFactoryRegistrationByAppPlugin_add_test()
+ITKIOFactoryRegistration_add_test()
 
 # Check ImageIO statically initialized are loaded only once
 set(app_factory_type "ImageIO")
 set(expectedRegisteredFactoryCount ${STATIC_${app_factory_type}_COUNT})
-ITKIOFactoryRegistrationByAppPlugin_add_test()
+ITKIOFactoryRegistration_add_test()
 
 # Check MeshIO statically initialized are loaded only once
 set(app_factory_type "MeshIO")
 set(expectedRegisteredFactoryCount ${STATIC_${app_factory_type}_COUNT})
-ITKIOFactoryRegistrationByAppPlugin_add_test()
+ITKIOFactoryRegistration_add_test()
 
 # Check TransformIO statically initialized are loaded only once
 set(app_factory_type "TransformIO")
 set(expectedRegisteredFactoryCount ${STATIC_${app_factory_type}_COUNT})
-ITKIOFactoryRegistrationByAppPlugin_add_test()
+ITKIOFactoryRegistration_add_test()
 
 # --------------------------------------------------------------------------
 set(with_app_plugin TRUE)
@@ -334,42 +334,42 @@ set(app_factory_type "WithoutIO")
 set(plugin_factory_type "ImageIO")
 set(expectedRegisteredFactoryCount ${STATIC_${plugin_factory_type}_COUNT})
 set(plugin_dynamic_factory_type "WithoutIO")
-ITKIOFactoryRegistrationByAppPlugin_add_test()
+ITKIOFactoryRegistration_add_test()
 
 # Check App without MeshIO and plugin has registered factories
 set(app_factory_type "WithoutIO")
 set(plugin_factory_type "MeshIO")
 set(expectedRegisteredFactoryCount ${STATIC_${plugin_factory_type}_COUNT})
 set(plugin_dynamic_factory_type "WithoutIO")
-ITKIOFactoryRegistrationByAppPlugin_add_test()
+ITKIOFactoryRegistration_add_test()
 
 # Check App without TransformIO and plugin has registered factories
 set(app_factory_type "WithoutIO")
 set(plugin_factory_type "TransformIO")
 set(expectedRegisteredFactoryCount ${STATIC_${plugin_factory_type}_COUNT})
 set(plugin_dynamic_factory_type "WithoutIO")
-ITKIOFactoryRegistrationByAppPlugin_add_test()
+ITKIOFactoryRegistration_add_test()
 
 # Check ImageIO statically initialized are loaded only once
 set(app_factory_type "ImageIO")
 set(plugin_factory_type "ImageIO")
 set(expectedRegisteredFactoryCount ${STATIC_${plugin_factory_type}_COUNT})
 set(plugin_dynamic_factory_type "WithoutIO")
-ITKIOFactoryRegistrationByAppPlugin_add_test()
+ITKIOFactoryRegistration_add_test()
 
 # Check MeshIO statically initialized are loaded only once
 set(app_factory_type "MeshIO")
 set(plugin_factory_type "MeshIO")
 set(expectedRegisteredFactoryCount ${STATIC_${plugin_factory_type}_COUNT})
 set(plugin_dynamic_factory_type "WithoutIO")
-ITKIOFactoryRegistrationByAppPlugin_add_test()
+ITKIOFactoryRegistration_add_test()
 
 # Check TransformIO statically initialized are loaded only once
 set(app_factory_type "TransformIO")
 set(plugin_factory_type "TransformIO")
 set(expectedRegisteredFactoryCount ${STATIC_${plugin_factory_type}_COUNT})
 set(plugin_dynamic_factory_type "WithoutIO")
-ITKIOFactoryRegistrationByAppPlugin_add_test()
+ITKIOFactoryRegistration_add_test()
 
 # --------------------------------------------------------------------------
 set(with_app_plugin TRUE)
@@ -380,21 +380,21 @@ set(app_factory_type "ImageIO")
 set(plugin_factory_type "ImageIO")
 set(plugin_dynamic_factory_type "ImageIO")
 math(EXPR expectedRegisteredFactoryCount "${STATIC_${plugin_factory_type}_COUNT} + ${DYNAMIC_${plugin_dynamic_factory_type}_COUNT}")
-ITKIOFactoryRegistrationByAppPlugin_add_test()
+ITKIOFactoryRegistration_add_test()
 
 # Check shared MeshIO along with statically initialized ones are loaded only once
 set(app_factory_type "MeshIO")
 set(plugin_factory_type "MeshIO")
 set(plugin_dynamic_factory_type "MeshIO")
 math(EXPR expectedRegisteredFactoryCount "${STATIC_${plugin_factory_type}_COUNT} + ${DYNAMIC_${plugin_dynamic_factory_type}_COUNT}")
-ITKIOFactoryRegistrationByAppPlugin_add_test()
+ITKIOFactoryRegistration_add_test()
 
 # Check shared TransformIO along with statically initialized ones are loaded only once
 set(app_factory_type "TransformIO")
 set(plugin_factory_type "TransformIO")
 set(plugin_dynamic_factory_type "TransformIO")
 math(EXPR expectedRegisteredFactoryCount "${STATIC_${plugin_factory_type}_COUNT} + ${DYNAMIC_${plugin_dynamic_factory_type}_COUNT}")
-ITKIOFactoryRegistrationByAppPlugin_add_test()
+ITKIOFactoryRegistration_add_test()
 
 # --------------------------------------------------------------------------
 set(with_app_plugin TRUE)
@@ -405,18 +405,18 @@ set(app_factory_type "ImageIO")
 set(plugin_factory_type "ImageIO")
 set(plugin_dynamic_factory_type "ImageIO")
 math(EXPR expectedRegisteredFactoryCount "${STATIC_${plugin_factory_type}_COUNT} + ${DYNAMIC_${plugin_dynamic_factory_type}_COUNT}")
-ITKIOFactoryRegistrationByAppPlugin_add_test()
+ITKIOFactoryRegistration_add_test()
 
 # Check shared MeshIO along with statically initialized ones are loaded only once
 set(app_factory_type "MeshIO")
 set(plugin_factory_type "MeshIO")
 set(plugin_dynamic_factory_type "MeshIO")
 math(EXPR expectedRegisteredFactoryCount "${STATIC_${plugin_factory_type}_COUNT} + ${DYNAMIC_${plugin_dynamic_factory_type}_COUNT}")
-ITKIOFactoryRegistrationByAppPlugin_add_test()
+ITKIOFactoryRegistration_add_test()
 
 # Check shared TransformIO along with statically initialized ones are loaded only once
 set(app_factory_type "TransformIO")
 set(plugin_factory_type "TransformIO")
 set(plugin_dynamic_factory_type "TransformIO")
 math(EXPR expectedRegisteredFactoryCount "${STATIC_${plugin_factory_type}_COUNT} + ${DYNAMIC_${plugin_dynamic_factory_type}_COUNT}")
-ITKIOFactoryRegistrationByAppPlugin_add_test()
+ITKIOFactoryRegistration_add_test()

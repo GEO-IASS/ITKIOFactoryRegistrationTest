@@ -1,5 +1,5 @@
-ITKIOFactoryRegistrationByAppPlugin
-===================================
+ITKIOFactoryRegistration
+========================
 
 Small project illustrating ITK issue [#3393](https://issues.itk.org/jira/browse/ITK-3393)
 
