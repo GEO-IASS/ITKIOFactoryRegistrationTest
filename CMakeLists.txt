@@ -132,11 +132,12 @@ define_itk_components()
 
 # Build App without static initialization
 set(APP_FACTORY_TYPE ${FACTORY_TYPE})
+set(APP_NAME "App${APP_FACTORY_TYPE}")
 disable_io_factories_instantiation()
 set(INSTANTIATE_ImageIO 1)
 set(INSTANTIATE_MeshIO 1)
 set(INSTANTIATE_TransformIO 1)
-add_subdirectory(App App${APP_FACTORY_TYPE})
+add_subdirectory(App ${APP_NAME})
 
 # --------------------------------------------------------------------------
 # ImageIO
@@ -152,9 +153,10 @@ add_subdirectory(AppHelloPlugin ${PLUGIN_NAME})
 
 # Build App
 set(APP_FACTORY_TYPE ${FACTORY_TYPE})
+set(APP_NAME "App${APP_FACTORY_TYPE}")
 disable_io_factories_instantiation()
 set(INSTANTIATE_ImageIO 1)
-add_subdirectory(App App${APP_FACTORY_TYPE})
+add_subdirectory(App ${APP_NAME})
 
 # --------------------------------------------------------------------------
 # MeshIO
@@ -170,9 +172,10 @@ add_subdirectory(AppHelloPlugin ${PLUGIN_NAME})
 
 # Build App
 set(APP_FACTORY_TYPE ${FACTORY_TYPE})
+set(APP_NAME "App${APP_FACTORY_TYPE}")
 disable_io_factories_instantiation()
 set(INSTANTIATE_MeshIO 1)
-add_subdirectory(App App${APP_FACTORY_TYPE})
+add_subdirectory(App ${APP_NAME})
 
 # --------------------------------------------------------------------------
 # TransformIO
@@ -188,10 +191,10 @@ add_subdirectory(AppHelloPlugin ${PLUGIN_NAME})
 
 # Build App
 set(APP_FACTORY_TYPE ${FACTORY_TYPE})
+set(APP_NAME "App${APP_FACTORY_TYPE}")
 disable_io_factories_instantiation()
 set(INSTANTIATE_TransformIO 1)
-add_subdirectory(App App${APP_FACTORY_TYPE})
-
+add_subdirectory(App ${APP_NAME})
 
 # --------------------------------------------------------------------------
 # Testing

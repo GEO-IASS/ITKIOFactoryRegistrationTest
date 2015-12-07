@@ -2,7 +2,11 @@ if(NOT DEFINED APP_FACTORY_TYPE)
   message(FATAL_ERROR "APP_FACTORY_TYPE is expected to be set.")
 endif()
 
-project(App${APP_FACTORY_TYPE})
+if(NOT DEFINED APP_NAME)
+  message(FATAL_ERROR "APP_NAME is expected to be set")
+endif()
+
+project(${APP_NAME})
 
 message(STATUS "")
 message(STATUS "Configuring ${CMAKE_PROJECT_NAME}:${PROJECT_NAME}")
