@@ -60,9 +60,13 @@ DisplayHelloImageIO
 
 bool
 DisplayHelloImageIO
-::CanWriteFile(const char* )
+::CanWriteFile(const char* fileName)
 {
-  return false;
+  if ( !fileName )
+    {
+    return false;
+    }
+  return std::string(fileName) == "ImageIO.hello";
 }
 
 void

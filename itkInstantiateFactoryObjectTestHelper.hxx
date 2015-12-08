@@ -36,14 +36,14 @@ bool instantiateTransformFactoryObject(const char* who, const char* fileName, bo
   bool result = expected;
 
   typename TransformIOType::Pointer transformIO;
-  transformIO = TransformFactoryIOType::CreateTransformIO( fileName, itk::ReadMode );
+  transformIO = TransformFactoryIOType::CreateTransformIO( fileName, itk::WriteMode );
 
   if ( transformIO.IsNull() )
     {
     result = false == expected;
     if ( !result )
       {
-      std::cerr << "Failed to instantiate factory object reading " << fileName << std::endl;
+      std::cerr << "Failed to instantiate factory object writing " << fileName << std::endl;
       return false;
       }
     std::cout << who << "_INSTANTIATE_TransformIO_" << TypeName::name << " null" << std::endl;
@@ -53,7 +53,7 @@ bool instantiateTransformFactoryObject(const char* who, const char* fileName, bo
     result = true == expected;
     if ( !result )
       {
-      std::cerr << "Instantiating factory object reading " << fileName << " is expected to FAIL" << std::endl;
+      std::cerr << "Instantiating factory object writing " << fileName << " is expected to FAIL" << std::endl;
       return false;
       }
     std::cout << who << "_INSTANTIATE_TransformIO_" << TypeName::name << " " << transformIO->GetNameOfClass() << std::endl;
@@ -76,13 +76,13 @@ bool instantiateFactoryObjects(const char* who,
   itk::ImageIOBase::Pointer io;
   const char* factory_type = "ImageIO";
   const char* fileName = "ImageIO.hello";
-  io = itk::ImageIOFactory::CreateImageIO( fileName, itk::ImageIOFactory::ReadMode );
+  io = itk::ImageIOFactory::CreateImageIO( fileName, itk::ImageIOFactory::WriteMode );
   if ( io.IsNull() )
     {
     result = false == expected;
     if ( !result )
       {
-      std::cerr << "Failed to instantiate factory object reading " << fileName << std::endl;
+      std::cerr << "Failed to instantiate factory object writing " << fileName << std::endl;
       return false;
       }
     std::cout << who << "_INSTANTIATE_" << factory_type << " null" << std::endl;
@@ -92,7 +92,7 @@ bool instantiateFactoryObjects(const char* who,
     result = true == expected;
     if ( !result )
       {
-      std::cerr << "Instantiating factory object reading " << fileName << " is expected to FAIL" << std::endl;
+      std::cerr << "Instantiating factory object writing " << fileName << " is expected to FAIL" << std::endl;
       return false;
       }
     std::cout << who << "_INSTANTIATE_" << factory_type << " " << io->GetNameOfClass() << std::endl;
@@ -106,13 +106,13 @@ bool instantiateFactoryObjects(const char* who,
   itk::MeshIOBase::Pointer io;
   const char* factory_type = "MeshIO";
   const char* fileName = "MeshIO.hello";
-  io = itk::MeshIOFactory::CreateMeshIO( fileName, itk::MeshIOFactory::ReadMode );
+  io = itk::MeshIOFactory::CreateMeshIO( fileName, itk::MeshIOFactory::WriteMode );
   if ( io.IsNull() )
     {
     result = false == expected;
     if ( !result )
       {
-      std::cerr << "Failed to instantiate factory object reading " << fileName << std::endl;
+      std::cerr << "Failed to instantiate factory object writing " << fileName << std::endl;
       return false;
       }
     std::cout << who << "_INSTANTIATE_" << factory_type << " null" << std::endl;
@@ -122,7 +122,7 @@ bool instantiateFactoryObjects(const char* who,
     result = true == expected;
     if ( !result )
       {
-      std::cerr << "Instantiating factory object reading " << fileName << " is expected to FAIL" << std::endl;
+      std::cerr << "Instantiating factory object writing " << fileName << " is expected to FAIL" << std::endl;
       return false;
       }
     std::cout << who << "_INSTANTIATE_" << factory_type << " " << io->GetNameOfClass() << std::endl;
