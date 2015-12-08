@@ -17,6 +17,8 @@
  *=========================================================================*/
 #ifndef itkDisplayHelloTransformIO_h
 #define itkDisplayHelloTransformIO_h
+#include "DisplayHelloTransformIOExport.h"
+
 #include "itkTransformIOBase.h"
 
 namespace itk
@@ -25,7 +27,7 @@ namespace itk
    * \brief TransformIO object that only display its name when registered.
    */
 template<typename TParametersValueType>
-class DisplayHelloTransformIOTemplate:public TransformIOBaseTemplate<TParametersValueType>
+class DisplayHelloTransformIO_EXPORT DisplayHelloTransformIOTemplate:public TransformIOBaseTemplate<TParametersValueType>
 {
 public:
   typedef DisplayHelloTransformIOTemplate               Self;
@@ -64,8 +66,6 @@ typedef DisplayHelloTransformIOTemplate<double> DisplayHelloTransformIO;
 
 }
 
-#ifndef ITK_MANUAL_INSTANTIATION
-#include "itkDisplayHelloTransformIO.hxx"
-#endif
+// Note: Explicit instantiation is done in itkDisplayHelloTransformIOInstantiation.cxx
 
 #endif // itkDisplayHelloTransformIO_h

@@ -17,7 +17,7 @@
  *=========================================================================*/
 #ifndef itkDisplayHelloTransformIOFactory_h
 #define itkDisplayHelloTransformIOFactory_h
-
+#include "DisplayHelloTransformIOExport.h"
 
 #include "itkObjectFactoryBase.h"
 #include "itkTransformIOBase.h"
@@ -27,7 +27,7 @@ namespace itk
 /** \class DisplayHelloTransformIOFactory
    * \brief Create instances of DisplayHelloTransformIO objects using an object factory.
    */
-class DisplayHelloTransformIOFactory:public ObjectFactoryBase
+class DisplayHelloTransformIO_EXPORT DisplayHelloTransformIOFactory:public ObjectFactoryBase
 {
 public:
   /** Standard class typedefs. */

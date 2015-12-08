@@ -8,8 +8,8 @@ set(factory_module "ITKIOTransformBase")
 set(factory_sources
   itkDisplayHelloTransformIO.hxx
   itkDisplayHelloTransformIOFactory.cxx
+  itkDisplayHelloTransformIOInstantiation.cxx
   )
-
 
 project(DisplayHello${factory_type}_${NAME_SUFFIX})
 
