@@ -42,13 +42,15 @@ add_library(${io_factory_name} SHARED
   ${factory_source}
   )
 target_link_libraries(${io_factory_name} LINK_PUBLIC ${ITK_LIBRARIES})
+
+set(itk-module "DisplayHello${factory_type}")
 set_target_properties(${io_factory_name}
   PROPERTIES
     LIBRARY_OUTPUT_DIRECTORY ${ITK${factory_type}DisplayHello_LIBRARY_OUTPUT_DIRECTORY}
     COMPILE_DEFINITIONS "DISPLAYHELLO_${factory_type}_FACTORY_NAME=\"${PROJECT_NAME}\""
+    DEFINE_SYMBOL ${itk-module}_EXPORTS
   )
 
-set(itk-module "DisplayHello${factory_type}")
 generate_export_header(${io_factory_name}
   EXPORT_FILE_NAME ${CMAKE_CURRENT_BINARY_DIR}/${itk-module}Export.h
   EXPORT_MACRO_NAME ${itk-module}_EXPORT
