@@ -46,6 +46,7 @@ target_link_libraries(${io_factory_name} LINK_PUBLIC ${ITK_LIBRARIES})
 set(itk-module "DisplayHello${factory_type}")
 set_target_properties(${io_factory_name}
   PROPERTIES
+    RUNTIME_OUTPUT_DIRECTORY ${ITK${factory_type}DisplayHello_LIBRARY_OUTPUT_DIRECTORY}
     LIBRARY_OUTPUT_DIRECTORY ${ITK${factory_type}DisplayHello_LIBRARY_OUTPUT_DIRECTORY}
     COMPILE_DEFINITIONS "DISPLAYHELLO_${factory_type}_FACTORY_NAME=\"${PROJECT_NAME}\""
     DEFINE_SYMBOL ${itk-module}_EXPORTS
