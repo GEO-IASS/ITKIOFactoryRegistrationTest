@@ -15,7 +15,6 @@ include(${ITK_USE_FILE})
 # --------------------------------------------------------------------------
 # XXX Adapated from 'ADD_FACTORY_REGISTRATION' available in UseITK.cmake
 macro(_update_enabled_io_list _type _module_name)
-
   list(FIND ITK_MODULES_REQUESTED ${_module_name} _module_was_requested)
   if(NOT ${_module_was_requested} EQUAL -1)
 
@@ -28,34 +27,33 @@ macro(_update_enabled_io_list _type _module_name)
 endmacro()
 
 # --------------------------------------------------------------------------
-#message("LIST_OF_IMAGEIO_FORMATS: ${LIST_OF_IMAGEIO_FORMATS}")
+function(_set_enabled_modules_global_property factory_type formats)
+  string(TOUPPER ${factory_type} factory_type_uc)
+  set(_qualifier_uc "${factory_type_uc}")
 
-set(LIST_OF_ENABLED_IMAGEIO_MODULES )
+  string(TOLOWER ${factory_type} factory_type_lc)
+  set(_qualifier_lc "_${factory_type_lc}")
 
-foreach(ImageFormat ${LIST_OF_IMAGEIO_FORMATS})
-  _update_enabled_io_list("IMAGEIO" "${${ImageFormat}_module_name}")
-endforeach()
+  # See below for explanation.
+  if("${factory_type}" STREQUAL "Image")
+    set(_qualifier_uc "")
+    set(_qualifier_lc "")
+  endif()
 
-set_property(GLOBAL PROPERTY LIST_OF_ENABLED_ImageIO_MODULES ${LIST_OF_ENABLED_IMAGEIO_MODULES})
+  #message("LIST_OF_${factory_type_uc}IO_FORMATS: ${formats}")
+
+  set(LIST_OF_ENABLED_${_qualifier_uc}IO_MODULES )
+
+  foreach(format ${formats})
+    _update_enabled_io_list("${_qualifier_uc}IO" "${${format}${_qualifier_lc}_module_name}")
+  endforeach()
+
+  set_property(GLOBAL PROPERTY LIST_OF_ENABLED_${factory_type}IO_MODULES ${LIST_OF_ENABLED_${_qualifier_uc}IO_MODULES})
+endfunction()
 
 # --------------------------------------------------------------------------
-#message("LIST_OF_MESHIO_FORMATS: ${LIST_OF_MESHIO_FORMATS}")
 
-set(LIST_OF_ENABLED_MESHIO_MODULES )
+_set_enabled_modules_global_property("Image" "${LIST_OF_IMAGEIO_FORMATS}")
+_set_enabled_modules_global_property("Mesh" "${LIST_OF_MESHIO_FORMATS}")
+_set_enabled_modules_global_property("Transform" "${LIST_OF_TRANSFORMIO_FORMATS}")
 
-foreach(MeshFormat ${LIST_OF_MESHIO_FORMATS})
-  _update_enabled_io_list("MESHIO" "${${MeshFormat}_module_name}")
-endforeach()
-
-set_property(GLOBAL PROPERTY LIST_OF_ENABLED_MeshIO_MODULES ${LIST_OF_ENABLED_MESHIO_MODULES})
-
-# --------------------------------------------------------------------------
-#message("LIST_OF_TRANSFORMIO_FORMATS: ${LIST_OF_TRANSFORMIO_FORMATS}")
-
-set(LIST_OF_ENABLED_TRANSFORMIO_MODULES )
-
-foreach(TransformFormat ${LIST_OF_TRANSFORMIO_FORMATS})
-  _update_enabled_io_list("TRANSFORMIO" "${${TransformFormat}_module_name}")
-endforeach()
-
-set_property(GLOBAL PROPERTY LIST_OF_ENABLED_TransformIO_MODULES ${LIST_OF_ENABLED_TRANSFORMIO_MODULES})
