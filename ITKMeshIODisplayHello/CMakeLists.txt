@@ -4,7 +4,7 @@ if(NOT DEFINED NAME_SUFFIX)
 endif()
 
 set(factory_type "MeshIO")
-set(factory_module "ITKIOMeshBase")
+set(factory_module "ITKIOMesh")
 set(factory_sources
   itkDisplayHelloMeshIO.cxx
   itkDisplayHelloMeshIOFactory.cxx

@@ -121,7 +121,7 @@ set(LIST_OF_ENABLED_WithoutIO_MODULES )
 
 set(APP_MAIN_WithoutIO_ITK_COMPONENT ITKCommon)
 set(APP_MAIN_ImageIO_ITK_COMPONENT ITKIOImageBase)
-set(APP_MAIN_MeshIO_ITK_COMPONENT ITKIOMeshBase)
+set(APP_MAIN_MeshIO_ITK_COMPONENT ITKIOMesh)
 set(APP_MAIN_TransformIO_ITK_COMPONENT ITKIOTransformBase)
 
 # --------------------------------------------------------------------------
