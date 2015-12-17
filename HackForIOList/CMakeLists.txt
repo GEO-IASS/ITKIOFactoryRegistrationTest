@@ -28,24 +28,26 @@ endmacro()
 
 # --------------------------------------------------------------------------
 function(_set_enabled_modules_global_property factory_type formats)
-  string(TOUPPER ${factory_type} factory_type_uc)
-  set(_qualifier_uc "${factory_type_uc}")
+  string(TOUPPER ${factory_type} _qualifier_uc)
+  string(TOLOWER ${factory_type} _factory_type_lc)
 
-  string(TOLOWER ${factory_type} factory_type_lc)
-  set(_qualifier_lc "_${factory_type_lc}")
-
-  # See below for explanation.
-  if("${factory_type}" STREQUAL "Image")
-    set(_qualifier_uc "")
-    set(_qualifier_lc "")
-  endif()
-
-  #message("LIST_OF_${factory_type_uc}IO_FORMATS: ${formats}")
+  message("LIST_OF_${_qualifier_uc}IO_FORMATS: ${formats}")
 
   set(LIST_OF_ENABLED_${_qualifier_uc}IO_MODULES )
 
+  set(_qualifier "_${_factory_type_lc}")
+
+  # For backward compatibility, ImageIO exceptions are set as
+  # "<format>_(module|factory)_name" instead of "<format>_image_(module|factory)_name".
+  if("${factory_type}" STREQUAL "Image")
+    set(_qualifier "")
+  endif()
+
   foreach(format ${formats})
-    _update_enabled_io_list("${_qualifier_uc}IO" "${${format}${_qualifier_lc}_module_name}")
+    if(NOT DEFINED ${format}${_qualifier}_module_name)
+      message(FATAL_ERROR "Variable '${format}${_qualifier}_module_name' is expected to be defined.")
+    endif()
+    _update_enabled_io_list("${_qualifier_uc}IO" "${${format}${_qualifier}_module_name}")
   endforeach()
 
   set_property(GLOBAL PROPERTY LIST_OF_ENABLED_${factory_type}IO_MODULES ${LIST_OF_ENABLED_${_qualifier_uc}IO_MODULES})
