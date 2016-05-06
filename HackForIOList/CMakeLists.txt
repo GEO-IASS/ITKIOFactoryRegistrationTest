@@ -31,8 +31,6 @@ function(_set_enabled_modules_global_property factory_type formats)
   string(TOUPPER ${factory_type} _qualifier_uc)
   string(TOLOWER ${factory_type} _factory_type_lc)
 
-  message("LIST_OF_${_qualifier_uc}IO_FORMATS: ${formats}")
-
   set(LIST_OF_ENABLED_${_qualifier_uc}IO_MODULES )
 
   set(_qualifier "_${_factory_type_lc}")
