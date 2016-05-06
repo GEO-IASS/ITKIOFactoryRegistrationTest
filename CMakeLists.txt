@@ -30,6 +30,11 @@ set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/bin)
 set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/bin)
 
 # --------------------------------------------------------------------------
+option(ENABLE_ImageIO_TESTING "Enable ImageIO testing" 1)
+option(ENABLE_MeshIO_TESTING "Enable MeshIO testing" 0)
+option(ENABLE_TransformIO_TESTING "Enable TransformIO testing" 1)
+
+# --------------------------------------------------------------------------
 add_subdirectory(HackForIOList)
 
 message(STATUS "")
@@ -49,42 +54,46 @@ macro(build_custom_io_factories factory_type)
 
   message(STATUS "")
 
-  set(INSTANTIATE_${factory_type}_TARGETS )
-  set(INSTANTIATE_${factory_type}_INCLUDE_DIRS )
+  if(ENABLE_${factory_type}_TESTING)
 
-  string(TOLOWER ${factory_type} output_dir)
+    set(INSTANTIATE_${factory_type}_TARGETS )
+    set(INSTANTIATE_${factory_type}_INCLUDE_DIRS )
 
-  set(ITK${factory_type}DisplayHello_LIBRARY_OUTPUT_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/${output_dir})
+    string(TOLOWER ${factory_type} output_dir)
 
-  set(NAME_SUFFIX "0")
-  add_subdirectory(ITK${factory_type}DisplayHello ITK${factory_type}DisplayHello${NAME_SUFFIX})
+    set(ITK${factory_type}DisplayHello_LIBRARY_OUTPUT_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/${output_dir})
 
-  list(APPEND INSTANTIATE_${factory_type}_TARGETS
-    DisplayHello${factory_type}_${NAME_SUFFIX}
-    )
+    set(NAME_SUFFIX "0")
+    add_subdirectory(ITK${factory_type}DisplayHello ITK${factory_type}DisplayHello${NAME_SUFFIX})
 
-  list(APPEND INSTANTIATE_${factory_type}_INCLUDE_DIRS
-    ${DisplayHello${factory_type}_${NAME_SUFFIX}_SOURCE_DIR}
-    )
+    list(APPEND INSTANTIATE_${factory_type}_TARGETS
+      DisplayHello${factory_type}_${NAME_SUFFIX}
+      )
 
-  set(NAME_SUFFIX "1")
-  add_subdirectory(ITK${factory_type}DisplayHello ITK${factory_type}DisplayHello${NAME_SUFFIX})
+    list(APPEND INSTANTIATE_${factory_type}_INCLUDE_DIRS
+      ${DisplayHello${factory_type}_${NAME_SUFFIX}_SOURCE_DIR}
+      )
 
-  list(APPEND INSTANTIATE_${factory_type}_TARGETS
-    DisplayHello${factory_type}_${NAME_SUFFIX}
-    )
+    set(NAME_SUFFIX "1")
+    add_subdirectory(ITK${factory_type}DisplayHello ITK${factory_type}DisplayHello${NAME_SUFFIX})
 
-  list(APPEND INSTANTIATE_${factory_type}_INCLUDE_DIRS
-    ${DisplayHello${factory_type}_${NAME_SUFFIX}_SOURCE_DIR}
-    )
+    list(APPEND INSTANTIATE_${factory_type}_TARGETS
+      DisplayHello${factory_type}_${NAME_SUFFIX}
+      )
 
-  set(DYNAMIC_${factory_type}_COUNT 2)
+    list(APPEND INSTANTIATE_${factory_type}_INCLUDE_DIRS
+      ${DisplayHello${factory_type}_${NAME_SUFFIX}_SOURCE_DIR}
+      )
 
+    set(DYNAMIC_${factory_type}_COUNT 2)
+
+    list(APPEND INSTANTIATE_${factory_type}_INCLUDE_DIRS
+      ${${factory_type}_INCLUDE_DIRS}
+      )
+  else()
+    set(DYNAMIC_${factory_type}_COUNT 0)
+  endif()
   message(STATUS "Number of custom dynamic '${factory_type}' factories: ${DYNAMIC_${factory_type}_COUNT}")
-
-  list(APPEND INSTANTIATE_${factory_type}_INCLUDE_DIRS
-    ${${factory_type}_INCLUDE_DIRS}
-    )
 endmacro()
 
 # --------------------------------------------------------------------------
@@ -134,9 +143,9 @@ define_itk_components()
 set(APP_FACTORY_TYPE ${FACTORY_TYPE})
 set(APP_NAME "App${APP_FACTORY_TYPE}")
 disable_io_factories_instantiation()
-set(INSTANTIATE_ImageIO 1)
-set(INSTANTIATE_MeshIO 1)
-set(INSTANTIATE_TransformIO 1)
+set(INSTANTIATE_ImageIO ${ENABLE_ImageIO_TESTING})
+set(INSTANTIATE_MeshIO ${ENABLE_MeshIO_TESTING})
+set(INSTANTIATE_TransformIO ${ENABLE_TransformIO_TESTING})
 add_subdirectory(App ${APP_NAME})
 
 # --------------------------------------------------------------------------
@@ -150,34 +159,42 @@ set(PLUGIN_NAME "AppHelloPluginLoading${FACTORY_TYPE}")
 set(PLUGIN_FACTORY_TYPE ${FACTORY_TYPE})
 disable_io_factories_instantiation()
 set(INSTANTIATE_ImageIO 1)
-add_subdirectory(AppHelloPlugin ${PLUGIN_NAME})
+if(ENABLE_${FACTORY_TYPE}_TESTING)
+  add_subdirectory(AppHelloPlugin ${PLUGIN_NAME})
+endif()
 
 # Build App
 set(APP_FACTORY_TYPE ${FACTORY_TYPE})
 set(APP_NAME "App${APP_FACTORY_TYPE}")
 disable_io_factories_instantiation()
 set(INSTANTIATE_ImageIO 1)
-add_subdirectory(App ${APP_NAME})
+if(ENABLE_${FACTORY_TYPE}_TESTING)
+  add_subdirectory(App ${APP_NAME})
+endif()
 
 # --------------------------------------------------------------------------
 # MeshIO
 
 set(FACTORY_TYPE MeshIO)
-define_itk_components()
+#define_itk_components() # MeshIODisabled
 
 # Build App plugin
 set(PLUGIN_NAME "AppHelloPluginLoading${FACTORY_TYPE}")
 set(PLUGIN_FACTORY_TYPE ${FACTORY_TYPE})
 disable_io_factories_instantiation()
 set(INSTANTIATE_MeshIO 1)
-add_subdirectory(AppHelloPlugin ${PLUGIN_NAME})
+if(ENABLE_${FACTORY_TYPE}_TESTING)
+  add_subdirectory(AppHelloPlugin ${PLUGIN_NAME})
+endif()
 
 # Build App
 set(APP_FACTORY_TYPE ${FACTORY_TYPE})
 set(APP_NAME "App${APP_FACTORY_TYPE}")
 disable_io_factories_instantiation()
 set(INSTANTIATE_MeshIO 1)
-add_subdirectory(App ${APP_NAME})
+if(ENABLE_${FACTORY_TYPE}_TESTING)
+  add_subdirectory(App ${APP_NAME})
+endif()
 
 # --------------------------------------------------------------------------
 # TransformIO
@@ -190,14 +207,18 @@ set(PLUGIN_NAME "AppHelloPluginLoading${FACTORY_TYPE}")
 set(PLUGIN_FACTORY_TYPE ${FACTORY_TYPE})
 disable_io_factories_instantiation()
 set(INSTANTIATE_TransformIO 1)
-add_subdirectory(AppHelloPlugin ${PLUGIN_NAME})
+if(ENABLE_${FACTORY_TYPE}_TESTING)
+  add_subdirectory(AppHelloPlugin ${PLUGIN_NAME})
+endif()
 
 # Build App
 set(APP_FACTORY_TYPE ${FACTORY_TYPE})
 set(APP_NAME "App${APP_FACTORY_TYPE}")
 disable_io_factories_instantiation()
 set(INSTANTIATE_TransformIO 1)
-add_subdirectory(App ${APP_NAME})
+if(ENABLE_${FACTORY_TYPE}_TESTING)
+  add_subdirectory(App ${APP_NAME})
+endif()
 
 # --------------------------------------------------------------------------
 # Testing
@@ -211,7 +232,18 @@ if(CMAKE_CONFIGURATION_TYPES)
   set(ITKTransformIODisplayHello_LIBRARY_OUTPUT_DIRECTORY "${ITKTransformIODisplayHello_LIBRARY_OUTPUT_DIRECTORY}/$<CONFIG>")
 endif()
 
-macro(ITKIOFactoryRegistration_add_test)
+function(ITKIOFactoryRegistration_add_test)
+
+  if(NOT app_factory_type STREQUAL "WithoutIO" AND NOT ENABLE_${app_factory_type}_TESTING)
+    return()
+  endif()
+  if(NOT plugin_factory_type STREQUAL "WithoutIO" AND NOT ENABLE_${plugin_factory_type}_TESTING)
+    return()
+  endif()
+  if(NOT plugin_dynamic_factory_type STREQUAL "WithoutIO" AND NOT ENABLE_${plugin_dynamic_factory_type}_TESTING)
+    return()
+  endif()
+
   set(extra_args "None")
   set(testenvs)
   set(expectedRegisteredFactoryCountBeforePluginLoad 0)
@@ -252,10 +284,16 @@ macro(ITKIOFactoryRegistration_add_test)
 
   set(pass_regex )
   if(app_factory_type STREQUAL "WithoutIO")
-    set(pass_regex "${pass_regex}APP_INSTANTIATE_ImageIO null\n")
-    set(pass_regex "${pass_regex}APP_INSTANTIATE_MeshIO null\n")
-    set(pass_regex "${pass_regex}APP_INSTANTIATE_TransformIO_float null\n")
-    set(pass_regex "${pass_regex}APP_INSTANTIATE_TransformIO_double null\n")
+    if(ENABLE_ImageIO_TESTING)
+      set(pass_regex "${pass_regex}APP_INSTANTIATE_ImageIO null\n")
+    endif()
+    if(ENABLE_MeshIO_TESTING)
+      set(pass_regex "${pass_regex}APP_INSTANTIATE_MeshIO null\n")
+    endif()
+    if(ENABLE_TransformIO_TESTING)
+      set(pass_regex "${pass_regex}APP_INSTANTIATE_TransformIO_float null\n")
+      set(pass_regex "${pass_regex}APP_INSTANTIATE_TransformIO_double null\n")
+    endif()
   endif()
   set(pass_regex "${pass_regex}expectedRegisteredFactoryCountBeforePluginLoad: ${expectedRegisteredFactoryCountBeforePluginLoad}\n")
   set(pass_regex "${pass_regex}expectedRegisteredFactoryCount: ${expectedRegisteredFactoryCount}\n")
@@ -285,7 +323,7 @@ macro(ITKIOFactoryRegistration_add_test)
   foreach(testenv ${testenvs})
     set_property(TEST ${testname} APPEND PROPERTY ENVIRONMENT ${testenv})
   endforeach()
-endmacro()
+endfunction()
 
 
 # --------------------------------------------------------------------------
