@@ -12,5 +12,5 @@ It builds one executable and two libraries:
 Usage
 -----
 
-1. Build project using CMake specifying `-DITK_DIR` pointing to ITK built with `-DITK_BUILD_SHARED_LIBS=ON`
+1. Build project using CMake specifying `-DITK_DIR` pointing to ITK built with `-DBUILD_SHARED_LIBS=ON`
 2. Run tests
